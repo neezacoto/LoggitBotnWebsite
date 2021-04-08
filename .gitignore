@@ -1,2 +1,3 @@
 # Project exclude paths
 /studywithmebot/node_modules/
+/studywithmebot/config.json
