@@ -91,6 +91,13 @@ orm.sync()
     }
 
         /**
+         * test endpoint to see if the discord bot is communicating with the server correctly
+         */
+    app.get("/Ping",(request,response)=>{
+        response.json("Pong!");
+        response.send();
+    })
+        /**
          * returns an array with the top user objects filtered from the Season table
          */
     app.get("/Season/Leaderboard",(request,response)=>{
