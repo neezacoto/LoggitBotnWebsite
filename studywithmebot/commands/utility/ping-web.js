@@ -4,13 +4,12 @@ module.exports = {
     description: 'PingWeb!',
     guildOnly:true,
     cooldown: 10,
-    execute(message, args) {
-        fetch(`https://45.79.131.73/Ping`)
+    async execute(message, args) {
+        const {ping} = await fetch(`http://localhost:9999/Ping`)
             .then((result)=>{
-                if(JSON.stringify(result) === "Pong!")
-                {
-                    message.channel.send("Database: Pong!");
-                }
+                console.log(result);
+                    return result.json();
             })
+        message.channel.send(ping);
     },
 };

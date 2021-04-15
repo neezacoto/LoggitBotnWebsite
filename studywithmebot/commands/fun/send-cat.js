@@ -6,7 +6,9 @@ module.exports = {
     cooldown: 5,
     async execute(message, args) {
         const { file } = await fetch('https://aws.random.cat/meow')
-            .then(response => response.json());
+            .then(response => {
+                console.log(response);
+                return response.json()});
 
         message.channel.send(file);
     },

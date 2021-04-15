@@ -76,7 +76,7 @@ orm.sync()
     app.set("view engine","ejs");
     app.set("views", "data_displays");
 
-    //https://45.79.131.73/Ping
+
 
     /**
      *
@@ -91,13 +91,13 @@ orm.sync()
             },
         });
     }
-
+        //http://localhost:9999/Ping
         /**
          * test endpoint to see if the discord bot is communicating with the server correctly
          */
     app.get("/Ping",(request,response)=>{
-        response.json("Pong!");
-        response.send();
+
+        response.send({ping: "Pong!"});
     })
         /**
          * returns an array with the top user objects filtered from the Season table
@@ -312,5 +312,8 @@ orm.sync()
 
 
     })
+        app.listen(9999, () => {
+            console.log ("Server started on port 9999");
+        })
 })
 
