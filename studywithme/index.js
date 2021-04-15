@@ -90,6 +90,29 @@ orm.sync()
         });
     }
 
+        /**
+         * returns an array with the top user objects filtered from the Season table
+         */
+    app.get("/Season/Leaderboard",(request,response)=>{
+        let server_id = request.query.server;
+        let top_num_of_people = request.query.top;
+        let server = getServer(server_id);
+
+        Season.findAll({
+            where: {
+                server_id: { [sequelize.Op.eq]: server_id},
+                season_number: { [sequelize.Op.eq]: server.season_number}
+            }
+        }).then((users)=>{
+           users.sort((a,b)=> (a.total_hours > b.total_hours)? 1 : -1);
+           if(top_num_of_people === 0 || top_num_of_people === null)
+           {
+               return users;
+           }else{
+               return users.splice(0,top_num_of_people-1);
+           }
+        })
+    })
 
         /**
          * wipes all entries from a server, which most likely is a result from ending a season
@@ -103,7 +126,7 @@ orm.sync()
         }else{
             Entry.findAll({
                 where: {
-                    id: { [sequelize.Op.eq]: server.server_id}
+                    server_id: { [sequelize.Op.eq]: server.server_id}
                 }
             }).then((results)=>{
                 results.delete();
