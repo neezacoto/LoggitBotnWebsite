@@ -1,17 +1,16 @@
+const fetch = require('node-fetch');
 module.exports = {
     name: 'pingweb',
-    description: 'sends a request to the database',
-    aliases: ['web'],
-    usage: 'tests connection to the database endpoints',
+    description: 'PingWeb!',
+    guildOnly:true,
     cooldown: 10,
     execute(message, args) {
-        fetch(`http://localhost:9999/Ping`)
+        fetch(`https://45.79.131.73/Ping`)
             .then((result)=>{
                 if(JSON.stringify(result) === "Pong!")
                 {
                     message.channel.send("Database: Pong!");
                 }
             })
-
-    }
-}
+    },
+};

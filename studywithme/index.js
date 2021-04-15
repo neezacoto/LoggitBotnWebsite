@@ -76,6 +76,8 @@ orm.sync()
     app.set("view engine","ejs");
     app.set("views", "data_displays");
 
+    //https://45.79.131.73/Ping
+
     /**
      *
      * @param object body that has server_id as a property
