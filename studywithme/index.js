@@ -11,10 +11,11 @@ let orm = new sequelize.Sequelize({
     logging: false
 });
 
+
+
 /**
  * Server holds information about the season so the entry knows where which season to compile to
  */
-
 class Server extends sequelize.Model {}
 Server.init({
     server_id: {
@@ -22,7 +23,7 @@ Server.init({
         primaryKey: true,
     },
     season_number: sequelize.DataTypes.INTEGER,
-    off_season: sequelize.DataTypes.Boolean //CAN I DO THIS????
+    off_season: sequelize.DataTypes.BOOLEAN
 }, {sequelize: orm, modelName: "Severs", timestamps: true})
 
 /**
@@ -63,7 +64,7 @@ Season.init({
 
 }, {sequelize: orm, modelName: "Seasons", timestamps: true});
 
-Season.hasMany(Entry, {as: "Seasons", foreignKey: "serveruser_id"})
+Season.belongsTo(Server, {as: "Server", foreignKey: "server_id"})
 
 orm.sync()
     .then((orm) => {
@@ -75,21 +76,94 @@ orm.sync()
     app.set("view engine","ejs");
     app.set("views", "data_displays");
 
-        /**
-         * returns the server body of the id requested
-         */
-    app.get("/Season/:id", (request, response) => {
-        let server_info = request.params.id;
-        Server.findOne({
+    /**
+     *
+     * @param object body that has server_id as a property
+     * @returns a promise that is the server
+     */
+    async function getServer(object)
+    {
+        return await Server.findOne({
             where: {
-                server_id: {[sequelize.Op.eq]: server_info}
-            }
-        }).then((results)=>{
-            response.json(results);
-            response.send();
-        })
+                server_id: {[sequelize.Op.eq]: object.server_id}
+            },
+        });
+    }
+
+
+        /**
+         * wipes all entries from a server, which most likely is a result from ending a season
+         */
+    app.delete("/Entry/Wipe/:id", (request, response)=>{
+        let server_info = request.params.id;
+        let server = getServer(server_info.server_id);
+        if(server === null) {
+            response.status(500);
+            response.json("Error: Wrong end point: There is no Season to update");
+        }else{
+            Entry.findAll({
+                where: {
+                    id: { [sequelize.Op.eq]: server.server_id}
+                }
+            }).then((results)=>{
+                results.delete();
+                response.status(200);
+                response.json("")
+            })
+        }
+    })
+        /**
+         * updates a server's season to on season if they exist and are off season
+         */
+    app.put("/Season/Toggle", (request,response)=>{
+        let server_info = request.body;
+        if(getServer(server_info.server_id) === null)
+        {
+            response.status(500);
+            response.json("Error: Wrong end point: There is no Season to update");
+        }else{
+            Server.findOne({
+                server_id: { [sequelize.Op.eq]: server_info.server_id}
+
+            })
+                .then((server)=> {
+                    //if it is off season, start the season
+                    if (!(server.off_season)) {
+                        server.season_number++;
+                        server.off_season = false;
+                        response.status(200);
+                        response.json("The season is on!");
+
+                    }
+                    //if the season is on, error
+                    else{
+                        server.off_season = false;
+                        response.status(200);
+                        response.json("The season is over!");
+                    }
+                })
+        }
 
     })
+        /**
+         * Creates a server entry for them on the database and starts their season
+         */
+    app.post("/Season/Create", (request, response) =>{
+        let server_info = request.body;
+        if(getServer(server_info.server_id) === null)
+        {
+            Server.create({
+                server_id: server_info.server_id,
+                season_number: 1,
+                off_season: false
+            })
+            response.status(200);
+            response.json("Server was added and the season is on!")
+        }else{
+
+        }
+    })
+
         /**
          * /Entry will add a user entry to the entry database and update their position in the season. If a season isn't
          * started this won't go through fully, and if a user isn't in the season yet, this will create a new position
@@ -112,104 +186,99 @@ orm.sync()
                 }
             }
         }catch(error){
+            valid=false;
             response.status(500);
             response.json({"Error with key list size:": error});
         }
-        //checks to see if the server has a season so it can then find the season to compress the entry to,
-        //by fetching /Server/:id get
-        fetch("http://45.79.131.73/Season/"+user_entry.server_id)
-            .then((server_info) => {
-                if(server_info == null || server_info.off_season)
-                {
-                    response.status(404);
-                    response.json("Your Server has not created a season");
-                }
-                else{
-                    if(valid)
-                    {
-                        //creates an entry
-                        Entry.create({
-                            serveruser_id: user_entry.server_id+"|"+ user_entry.user_id,
-                            server_avatar: user_entry.server_avatar,
-                            server_id: user_entry.server_id,
-                            user_avatar: user_entry.user_avatar,
-                            user_id: user_entry.user_id,
-                            hours: user_entry.hours,
-                            proof: user_entry.proof
-                        })
-                        //finding the season for the entry to be compiled to
-                        Season.findOne({
-                            where: {
-                                server_user_season: { [sequelize.Op.eq]: entry.server_id +"|"
-                                    +entry.user_id+"|"+server_info.season_number}
-                            }
-                        }).then((season)=>{
-                            //if the season doesn't exist we'll create it
-                            if(season === null)
-                            {
-                                Season.create({
-                                    server_user_season: (Entry.server_id +"|"
-                                        +Entry.user_id+"|"+server_info.season_number),
-                                    server_number: server_info.id,
-                                    server_avatar: user_entry.server_avatar,
-                                    server_id: server_info.server_id,
-                                    user_avatar: user_entry.user_avatar,
-                                    user_id: user_entry.user_id,
-                                    total_hours: user_entry.hours
+        if(valid) {
+            let server_info = getServer(user_entry);
+                    //checks to see if the server has a season so it can then find the season to compress the entry to,
+                    if (server_info == null || server_info.off_season) {
+                        response.status(404);
+                        response.json("Your Server has not created a season");
+                    } else {
+                            //creates an entry
+                            Entry.create({
+                                serveruser_id: user_entry.server_id + "|" + user_entry.user_id,
+                                server_avatar: user_entry.server_avatar,
+                                server_id: user_entry.server_id,
+                                user_avatar: user_entry.user_avatar,
+                                user_id: user_entry.user_id,
+                                hours: user_entry.hours,
+                                proof: user_entry.proof
+                            })
+
+                            //fetching to find a Season entry for the user
+                            Season.findOne({
+                                where: {
+                                    server_user_season: {
+                                        [sequelize.Op.eq]:
+                                            (user_entry.server_id + "|" +
+                                                user_entry.user_id + "|" +
+                                                server_info.season_number)
                                     }
-                                )
-                            }else{
-                                season.total_hours += user_entry.hours;
+                                }
+                            })
+                                .then((season) => {
+                                    //if the season doesn't exist we'll create it
+                                    if (season === null) {
+                                        Season.create({
+                                                server_user_season: (Entry.server_id + "|"
+                                                    + Entry.user_id + "|" + server_info.season_number),
+                                                server_number: server_info.id,
+                                                server_avatar: user_entry.server_avatar,
+                                                server_id: server_info.server_id,
+                                                user_avatar: user_entry.user_avatar,
+                                                user_id: user_entry.user_id,
+                                                total_hours: user_entry.hours
+                                            }
+                                        )
+                                    } else {
+                                        season.total_hours += user_entry.hours;
+                                    }
+
+                                    response.status(200);
+                                    response.json("Entry added and season position updated!")
+                                })
                             }
-                            response.status(200);
-                            response.json("Entry added and season position updated!")
-                        })
 
-
-                    }else{
-                        response.status(500);
-                        response.json("the keys were incorrectly named");
-                    }
-
-                    Entry.create({
-
-                    })
-                }
-            })
-
-
-
-
-
+        }else {
+            response.status(500);
+            response.json("the keys were incorrectly named");
+        }
+        response.send();
     })
+
+
         /**
          * this route finds season results for a user
          */
-    app.get("/Season/:user", (request, response) => {
+     app.get("/Season/:user", (request, response) => {
         let user = request.body;
-        //checking to see if a server has a season started and what
-        fetch("http://45.79.131.73/Season/"+user_entry.server_id)
-            .then((server_body) => {
-                if(server_body == null || server_body.off_season)
-                {
-                    response.status(404);
-                    response.json("Server Season was not created");
-                }
-                else {
-                    Season.findOne({
-                        where: {
-                            server_user_season: { // stopping place "what is server_user doing here
-                                [sequelize.Op.eq]: (entry.server_id + "|"
-                                + entry.user_id + "|" + server_body.season_number)
-                            }
+        let season = getServer(user).season_number;
+                Season.findOne({
+                    where: {
+                        server_user_season: {
+                            [sequelize.Op.eq]:
+                                (user.server_id + "|" + user.user_id + "|" + season)
                         }
-                    })
-                        .then((results)=>{
+                    }
+                })
+                    .then((results)=>{
+                        if(results === null)
+                        {
+                            response.status(404);
+                            response.json({"User season entry not found": results});
+                        } else{
+                            //if all goes well the season entry will be returned
+                            response.status(200);
                             response.json(results);
-                            response.send();
-                        })
-                }
-            })
+                        }
+
+                        response.send();
+                    })
+
+
     })
 })
 
