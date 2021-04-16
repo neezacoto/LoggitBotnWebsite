@@ -22,7 +22,7 @@ module.exports = {
             .setImage(user.avatarURL())
             .setColor("#ababab");
 
-        return message.channel.send(embed)
+        return message.channel.send(embed + "args: "+args[0])
     }
 
 }

@@ -24,7 +24,7 @@ Server.init({
     },
     season_number: sequelize.DataTypes.INTEGER,
     off_season: sequelize.DataTypes.BOOLEAN
-}, {sequelize: orm, modelName: "Severs", timestamps: true})
+}, {sequelize: orm, modelName: "Severs", timestamps: false})
 
 /**
  * Entry holds all the entries that will ever be inputted, but compiles entries to the Seasons class,
@@ -43,7 +43,7 @@ Entry.init({
     hours: sequelize.DataTypes.INTEGER,
     proof: sequelize.DataTypes.TEXT
 
-}, {sequelize: orm, modelName: "Entries", timestamps: true});
+}, {sequelize: orm, modelName: "Entries", timestamps: false});
 
 /**
  * Season is a compressed record of a studier's time on a specific server and season
@@ -62,7 +62,7 @@ Season.init({
     user_id: sequelize.DataTypes.TEXT,
     total_hours: sequelize.DataTypes.INTEGER,
 
-}, {sequelize: orm, modelName: "Seasons", timestamps: true});
+}, {sequelize: orm, modelName: "Seasons", timestamps: false});
 
 Season.belongsTo(Server, {as: "Server", foreignKey: "server_id"})
 

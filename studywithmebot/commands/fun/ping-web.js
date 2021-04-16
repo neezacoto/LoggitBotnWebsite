@@ -5,7 +5,7 @@ module.exports = {
     guildOnly:true,
     cooldown: 10,
     async execute(message, args) {
-        const {ping} = await fetch(`http://localhost:9999/Ping`)
+        const { ping } = await fetch(`http://localhost:9999/Ping`)
             .then((result)=>{
                 console.log(result);
                     return result.json();
