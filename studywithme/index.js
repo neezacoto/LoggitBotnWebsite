@@ -19,10 +19,10 @@ let orm = new sequelize.Sequelize({
 class Server extends sequelize.Model {}
 Server.init({
     server_id: {
-        type: sequelize.DataTypes.INTEGER,
+        type: sequelize.DataTypes.BIGINT,
         primaryKey: true,
     },
-    season_number: sequelize.DataTypes.INTEGER,
+    season_number: sequelize.DataTypes.BIGINT,
     off_season: sequelize.DataTypes.BOOLEAN
 }, {sequelize: orm, modelName: "Severs", timestamps: false})
 
@@ -37,10 +37,10 @@ Entry.init({
         primaryKey: true,
     },
     server_avatar: sequelize.DataTypes.TEXT,
-    server_id: sequelize.DataTypes.INTEGER,
+    server_id: sequelize.DataTypes.BIGINT,
     user_avatar: sequelize.DataTypes.TEXT,
-    user_id: sequelize.DataTypes.INTEGER,
-    hours: sequelize.DataTypes.INTEGER,
+    user_id: sequelize.DataTypes.BIGINT,
+    hours: sequelize.DataTypes.BIGINT,
     proof: sequelize.DataTypes.TEXT
 
 }, {sequelize: orm, modelName: "Entries", timestamps: false});
@@ -54,13 +54,13 @@ Season.init({
         type: sequelize.DataTypes.TEXT,
         primaryKey: true,
     },
-    season_number: sequelize.DataTypes.INTEGER,
+    season_number: sequelize.DataTypes.BIGINT,
     server_avatar: sequelize.DataTypes.TEXT,
-    server_id: sequelize.DataTypes.INTEGER,
+    server_id: sequelize.DataTypes.BIGINT,
     serveruser_id: sequelize.DataTypes.INTEGER,
     user_avatar: sequelize.DataTypes.TEXT,
-    user_id: sequelize.DataTypes.TEXT,
-    total_hours: sequelize.DataTypes.INTEGER,
+    user_id: sequelize.DataTypes.BIGINT,
+    total_hours: sequelize.DataTypes.BIGINT,
 
 }, {sequelize: orm, modelName: "Seasons", timestamps: false});
 
@@ -150,7 +150,11 @@ orm.sync()
          */
     app.put("/Season/Toggle", (request,response)=>{
         let server_info = request.body;
-        if(getServer(server_info.server_id) === null)
+        let isServer = null;
+        getServer(server_info.server_id).then((result)=>{
+            isServer = result;
+        })
+        if( isServer === null)
         {
             response.status(404);
             response.json("Error: Wrong end point: There is no Season to update");
@@ -161,7 +165,7 @@ orm.sync()
             })
                 .then((server)=> {
                     //if it is off season, start the season
-                    if (!(server.off_season)) {
+                    if (!(server.off_season) && server_info.arg.toLowerCase() === "start") {
                         response.json({
                             season_number: server.season_number + 1
                         });
@@ -169,11 +173,14 @@ orm.sync()
                         server.off_season = false;
                         response.status(200);
                     }
-                    //if the season is on, error
-                    else{
-                        server.off_season = false;
+                    //if the season is on, end it
+                    else if(server.off_season && server_info.arg.toLowerCase() === "end" ){
+                        server.off_season = true;
                         response.status(200);
                         response.json("The season is over!");
+                    }else{
+                        response.status(500);
+                        response.json({"error": server})
                     }
                 })
         }
@@ -184,17 +191,27 @@ orm.sync()
          */
     app.post("/Season/Create", (request, response) =>{
         let server_info = request.body;
-        if(!(server_info.server_id.length))
+        let isServer = null;
+        getServer(server_info.server_id).then((result)=>{
+            isServer = result;
+        })
+        if(isServer === null)
         {
             Server.create({
                 server_id: server_info.server_id,
                 season_number: 1,
                 off_season: false
-            })
-            response.status(200);
-            response.json("Server was added and the season is on!")
-        }else{
+            }).then(r => {
+                response.status(200);
+                response.json({
+                    message:"Server was added and the season is on!",
+                    server: r
+                })
+            } )
 
+        }else{
+            response.status(500);
+            response.json({"Error:":server_info});
         }
     })
 
@@ -228,32 +245,33 @@ orm.sync()
                             hours: user_entry.hours,
                             proof: user_entry.proof
                         })
-
-                        //fetching to find a Season entry for the user
-                        Season.findOne({
-                            where: {
-                                server_user_season: {
-                                    [sequelize.Op.eq]:
-                                        (user_entry.server_id + "|" +
-                                            user_entry.user_id + "|" +
-                                            server_info.season_number)
-                                }
+                    //fetching to find a Season entry for the user
+                    Season.findOne({
+                        where: {
+                            server_user_season: {
+                                [sequelize.Op.eq]:
+                                    (user_entry.server_id + "|" +
+                                        user_entry.user_id + "|" +
+                                        server_info.season_number)
                             }
-                        })
-                            .then((season) => {
-                                //if the season doesn't exist we'll create it
-                                if (season === null) {
-                                    Season.create({
-                                            server_user_season: (Entry.server_id + "|"
-                                                + Entry.user_id + "|" + server_info.season_number),
-                                            server_number: server_info.id,
-                                            server_avatar: user_entry.server_avatar,
-                                            server_id: server_info.server_id,
-                                            user_avatar: user_entry.user_avatar,
-                                            user_id: user_entry.user_id,
-                                            total_hours: user_entry.hours
-                                        }
-                                    )
+                        }
+                    })
+                        .then((season) => {
+                            //if the season doesn't exist we'll create it
+                            if (season === null) {
+                                Season.create({
+                                        server_user_season: (Entry.server_id + "|"
+                                            + Entry.user_id + "|" + server_info.season_number),
+                                        server_number: server_info.id,
+                                        server_avatar: user_entry.server_avatar,
+                                        server_id: server_info.server_id,
+                                        user_avatar: user_entry.user_avatar,
+                                        user_id: user_entry.user_id,
+                                        total_hours: user_entry.hours
+                                    }
+                                )
+
+
                                 } else {
                                     season.total_hours += user_entry.hours;
                                 }
