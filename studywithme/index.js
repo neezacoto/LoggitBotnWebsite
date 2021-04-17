@@ -91,6 +91,7 @@ orm.sync()
             },
         });
     }
+
         //http://localhost:9999/Ping
         /**
          * test endpoint to see if the discord bot is communicating with the server correctly
@@ -151,7 +152,7 @@ orm.sync()
         let server_info = request.body;
         if(getServer(server_info.server_id) === null)
         {
-            response.status(500);
+            response.status(404);
             response.json("Error: Wrong end point: There is no Season to update");
         }else{
             Server.findOne({
@@ -161,11 +162,12 @@ orm.sync()
                 .then((server)=> {
                     //if it is off season, start the season
                     if (!(server.off_season)) {
-                        server.season_number++;
+                        response.json({
+                            season_number: server.season_number + 1
+                        });
+                        server.season_number += 1;
                         server.off_season = false;
                         response.status(200);
-                        response.json("The season is on!");
-
                     }
                     //if the season is on, error
                     else{
@@ -182,7 +184,7 @@ orm.sync()
          */
     app.post("/Season/Create", (request, response) =>{
         let server_info = request.body;
-        if(getServer(server_info.server_id) === null)
+        if(!(server_info.server_id.length))
         {
             Server.create({
                 server_id: server_info.server_id,
@@ -206,78 +208,62 @@ orm.sync()
 
         //makes sure that the fields provided by the bot are good
         let user_entry = request.body;
-        let valid = true;
-        let check = ["server_avatar", "server_id","user_avatar","user_id","hours","proof"];
-        let tbd = Object.keys(user_entry);
-        try{
-            for(let i = 0; i < check.length; i++)
-            {
-                if(check[i] !== tbd[i])
-                {
-                    valid = false;
-                }
-            }
-        }catch(error){
-            valid=false;
-            response.status(500);
-            response.json({"Error with key list size:": error});
-        }
-        if(valid) {
-            let server_info = getServer(user_entry);
-                    //checks to see if the server has a season so it can then find the season to compress the entry to,
-                    if (server_info == null || server_info.off_season) {
-                        response.status(404);
-                        response.json("Your Server has not created a season");
-                    } else {
-                            //creates an entry
-                            Entry.create({
-                                serveruser_id: user_entry.server_id + "|" + user_entry.user_id,
-                                server_avatar: user_entry.server_avatar,
-                                server_id: user_entry.server_id,
-                                user_avatar: user_entry.user_avatar,
-                                user_id: user_entry.user_id,
-                                hours: user_entry.hours,
-                                proof: user_entry.proof
-                            })
+        let keys = Object.keys(user_entry);
+        let server_info;
+        getServer(user_entry).then((promise)=>{
+            server_info = promise;
+        });
+                //checks to see if the server has a season so it can then find the season to compress the entry to,
+                if (server_info == null || server_info.off_season) {
+                    response.status(404);
+                    response.json("server off season");
+                } else {
+                        //creates an entry
+                        Entry.create({
+                            serveruser_id: user_entry.server_id + "|" + user_entry.user_id,
+                            server_avatar: user_entry.server_avatar,
+                            server_id: user_entry.server_id,
+                            user_avatar: user_entry.user_avatar,
+                            user_id: user_entry.user_id,
+                            hours: user_entry.hours,
+                            proof: user_entry.proof
+                        })
 
-                            //fetching to find a Season entry for the user
-                            Season.findOne({
-                                where: {
-                                    server_user_season: {
-                                        [sequelize.Op.eq]:
-                                            (user_entry.server_id + "|" +
-                                                user_entry.user_id + "|" +
-                                                server_info.season_number)
-                                    }
+                        //fetching to find a Season entry for the user
+                        Season.findOne({
+                            where: {
+                                server_user_season: {
+                                    [sequelize.Op.eq]:
+                                        (user_entry.server_id + "|" +
+                                            user_entry.user_id + "|" +
+                                            server_info.season_number)
                                 }
-                            })
-                                .then((season) => {
-                                    //if the season doesn't exist we'll create it
-                                    if (season === null) {
-                                        Season.create({
-                                                server_user_season: (Entry.server_id + "|"
-                                                    + Entry.user_id + "|" + server_info.season_number),
-                                                server_number: server_info.id,
-                                                server_avatar: user_entry.server_avatar,
-                                                server_id: server_info.server_id,
-                                                user_avatar: user_entry.user_avatar,
-                                                user_id: user_entry.user_id,
-                                                total_hours: user_entry.hours
-                                            }
-                                        )
-                                    } else {
-                                        season.total_hours += user_entry.hours;
-                                    }
-
-                                    response.status(200);
-                                    response.json("Entry added and season position updated!")
-                                })
                             }
+                        })
+                            .then((season) => {
+                                //if the season doesn't exist we'll create it
+                                if (season === null) {
+                                    Season.create({
+                                            server_user_season: (Entry.server_id + "|"
+                                                + Entry.user_id + "|" + server_info.season_number),
+                                            server_number: server_info.id,
+                                            server_avatar: user_entry.server_avatar,
+                                            server_id: server_info.server_id,
+                                            user_avatar: user_entry.user_avatar,
+                                            user_id: user_entry.user_id,
+                                            total_hours: user_entry.hours
+                                        }
+                                    )
+                                } else {
+                                    season.total_hours += user_entry.hours;
+                                }
 
-        }else {
-            response.status(500);
-            response.json("the keys were incorrectly named");
-        }
+                                response.status(200);
+                                response.json("Entry added and season position updated!")
+                            })
+                        }
+
+
         response.send();
     })
 

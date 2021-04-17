@@ -19,20 +19,23 @@ module.exports = {
                 proof: args[1],
             }
             message.channel.send("\`\`\`"+JSON.stringify(entry)+"\`\`\`");
-            fetch(`http://localhost:9999/Entry`,
+            fetch("http://localhost:9999/Entry",
                 {
                     method: "POST",
                     headers: {
                         "Content-Type": "application/json"
                     },
-                    body: entry
+                    body: JSON.stringify(entry)
                 })
                 .then((result) => {
                     console.log(result);
-                    if(result.status===200)
+                    if(result.status === 200)
                     {
                         message.channel.send("Successfully logged ")
-                    }else{
+                    }
+                    else if(result.status === 404){
+                        message.channel.send("Your server is on off season!")
+                    }else {
                         message.channel.send("Something went wrong")
                     }
 
