@@ -214,7 +214,11 @@ orm.sync()
             response.json({"Error:":server_info});
         }
     })
+    app.put("/Season/Update",(request,response)=>{
+        let season = request.body;
 
+        season.to_update.total_hours += BigInt(season.hours);
+    })
         /**
          * /Entry will add a user entry to the entry database and update their position in the season. If a season isn't
          * started this won't go through fully, and if a user isn't in the season yet, this will create a new position
@@ -225,61 +229,66 @@ orm.sync()
 
         //makes sure that the fields provided by the bot are good
         let user_entry = request.body;
-        let keys = Object.keys(user_entry);
-        let server_info;
-        getServer(user_entry).then((promise)=>{
-            server_info = promise;
-        });
-                //checks to see if the server has a season so it can then find the season to compress the entry to,
-                if (server_info == null || server_info.off_season) {
-                    response.status(404);
-                    response.json("server off season");
-                } else {
-                        //creates an entry
-                        Entry.create({
-                            serveruser_id: user_entry.server_id + "|" + user_entry.user_id,
-                            server_avatar: user_entry.server_avatar,
-                            server_id: user_entry.server_id,
-                            user_avatar: user_entry.user_avatar,
-                            user_id: user_entry.user_id,
-                            hours: user_entry.hours,
-                            proof: user_entry.proof
-                        })
-                    //fetching to find a Season entry for the user
-                    Season.findOne({
-                        where: {
-                            server_user_season: {
-                                [sequelize.Op.eq]:
-                                    (user_entry.server_id + "|" +
-                                        user_entry.user_id + "|" +
-                                        server_info.season_number)
-                            }
+
+        getServer(user_entry)
+            .then((server_info)=>
+        {
+            //checks to see if the server has a season so it can then find the season to compress the entry to,
+            if (server_info == null || server_info.off_season) {
+                response.status(404);
+                response.json("server off season");
+            } else {
+                //creates an entry
+                Entry.create({
+                    serveruser_id: user_entry.server_id + "|" + user_entry.user_id,
+                    server_avatar: user_entry.server_avatar,
+                    server_id: BigInt(user_entry.server_id),
+                    user_avatar: user_entry.user_avatar,
+                    user_id: user_entry.user_id,
+                    hours: BigInt(user_entry.hours),
+                    proof: user_entry.proof
+                })
+                //fetching to find a Season entry for the user
+                Season.findOne({
+                    where: {
+                        server_user_season: {
+                            [sequelize.Op.eq]:
+                                (user_entry.server_id + "|" +
+                                    user_entry.user_id + "|" +
+                                    server_info.season_number)
                         }
-                    })
-                        .then((season) => {
-                            //if the season doesn't exist we'll create it
-                            if (season === null) {
-                                Season.create({
-                                        server_user_season: (Entry.server_id + "|"
-                                            + Entry.user_id + "|" + server_info.season_number),
-                                        server_number: server_info.id,
-                                        server_avatar: user_entry.server_avatar,
-                                        server_id: server_info.server_id,
-                                        user_avatar: user_entry.user_avatar,
-                                        user_id: user_entry.user_id,
-                                        total_hours: user_entry.hours
-                                    }
-                                )
-
-
-                                } else {
-                                    season.total_hours += user_entry.hours;
+                    }
+                })
+                    .then((season) => {
+                        //if the season doesn't exist we'll create it
+                        if (season === null) {
+                            Season.create({
+                                    server_user_season: (user_entry.server_id + "|"
+                                        + user_entry.user_id + "|" + server_info.season_number),
+                                    season_number: BigInt(server_info.season_number),
+                                    server_avatar: user_entry.server_avatar,
+                                    server_id: BigInt(server_info.server_id),
+                                    user_avatar: user_entry.user_avatar,
+                                    user_id: user_entry.user_id,
+                                    total_hours: BigInt(user_entry.hours)
                                 }
+                            )
+                            response.status(200);
+                            response.json("Entry added and season position updated!");
 
-                                response.status(200);
-                                response.json("Entry added and season position updated!")
-                            })
+
+                        } else {
+                            response.status(201);
+                            response.json({
+                                to_update:season,
+                                hours: user_entry.hours
+                            });
                         }
+
+
+                    })
+            }
+        })
 
 
         response.send();

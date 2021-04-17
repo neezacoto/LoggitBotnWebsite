@@ -29,9 +29,24 @@ module.exports = {
                 })
                 .then((result) => {
                     console.log(result);
-                    if(result.status === 200)
+                    if(result)
                     {
-                        message.channel.send("Successfully logged ")
+                        message.channel.send("Welcome to the season!")
+                    }
+                    else if(result.status === 202)
+                    {
+                        fetch("http://localhost:9999/Season/Update",
+                            {
+                                method: "PUT",
+                                headers: {
+                                    "Content-Type": "application/json"
+                                },
+                                body: JSON.stringify(result)
+                            })
+                            .then((result)=>
+                            {
+                                message.channel.send("Successfully logged!")
+                            })
                     }
                     else if(result.status === 404){
                         message.channel.send("Your server is on off season!")
