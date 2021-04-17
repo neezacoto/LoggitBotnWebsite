@@ -39,7 +39,7 @@ Entry.init({
     server_avatar: sequelize.DataTypes.TEXT,
     server_id: sequelize.DataTypes.BIGINT,
     user_avatar: sequelize.DataTypes.TEXT,
-    user_id: sequelize.DataTypes.BIGINT,
+    user_id: sequelize.DataTypes.TEXT,
     hours: sequelize.DataTypes.BIGINT,
     proof: sequelize.DataTypes.TEXT
 
@@ -57,9 +57,9 @@ Season.init({
     season_number: sequelize.DataTypes.BIGINT,
     server_avatar: sequelize.DataTypes.TEXT,
     server_id: sequelize.DataTypes.BIGINT,
-    serveruser_id: sequelize.DataTypes.INTEGER,
+    serveruser_id: sequelize.DataTypes.TEXT,
     user_avatar: sequelize.DataTypes.TEXT,
-    user_id: sequelize.DataTypes.BIGINT,
+    user_id: sequelize.DataTypes.TEXT,
     total_hours: sequelize.DataTypes.BIGINT,
 
 }, {sequelize: orm, modelName: "Seasons", timestamps: false});
