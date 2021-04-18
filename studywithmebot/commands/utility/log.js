@@ -1,4 +1,5 @@
 const fetch = require('node-fetch');
+const {entry_url, season_update_url, season_user_url} = require('../../endpoints.json');
 module.exports = {
     name: 'log',
     description: 'Logs hours into Loggit.',
@@ -6,7 +7,8 @@ module.exports = {
     usage: '<hours> <discord link proof>',
     args: true,
     cooldown: 10,
-    execute(message, args) {
+     async execute(message, args) {
+        console.log(entry_url +" " + season_update_url);
         if(args.length === 2) {
 
             let entry = {
@@ -19,42 +21,48 @@ module.exports = {
                 proof: args[1],
             }
             message.channel.send("\`\`\`"+JSON.stringify(entry)+"\`\`\`");
-            fetch("http://localhost:9999/Entry",
-                {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json"
-                    },
-                    body: JSON.stringify(entry)
-                })
-                .then((result) => {
-                    console.log(result);
-                    if(result)
-                    {
-                        message.channel.send("Welcome to the season!")
-                    }
-                    else if(result.status === 202)
-                    {
-                        fetch("http://localhost:9999/Season/Update",
-                            {
-                                method: "PUT",
-                                headers: {
-                                    "Content-Type": "application/json"
-                                },
-                                body: JSON.stringify(result)
-                            })
-                            .then((result)=>
-                            {
-                                message.channel.send("Successfully logged!")
-                            })
-                    }
-                    else if(result.status === 404){
-                        message.channel.send("Your server is on off season!")
-                    }else {
-                        message.channel.send("Something went wrong")
-                    }
+            let check = await fetch(season_user_url+entry.serveruser_id,{
+                        method: "GET"}
+                        )
 
-                })
+            if(check.status === 404 )
+            {
+                fetch(entry_url,
+                    {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json"
+                        },
+                        body: JSON.stringify(entry)
+                    })
+                    .then((result)=>{
+                        console.log(result);
+                        if(result.status === 200)
+                        {
+                            message.channel.send("Welcome to the season!")
+                        }
+                        else if(result.status === 404){
+                            message.channel.send("Your server is on off season!")
+                        }else {
+                            message.channel.send("Something went wrong")
+                        }
+
+                    })
+            }
+                else{
+                    let {server_user_season} = await check.json();
+                    fetch(season_update_url,
+                        {
+                            method: "PUT",
+                            headers: {
+                                "Content-Type": "application/json"
+                            },
+                            body: JSON.stringify({
+                                server_user_season: server_user_season,
+                                hours: entry.hours})
+                        })
+                        message.channel.send("Successfully logged!")
+                }
         }else{
             message.channel.send("Please put <hours> <discord link of proof>");
         }

@@ -1,4 +1,5 @@
 const fetch = require('node-fetch');
+const {server_season_toggle_url, server_season_create_url} = require('../../endpoints.json');
 module.exports = {
     name: 'season',
     description: 'Starts and ends seasons.',
@@ -15,7 +16,7 @@ module.exports = {
             }
             message.channel.send("\`\`\`"+JSON.stringify(entry)+"\`\`\`");
             if(args[0].toLowerCase() ==="start") {
-                fetch("http://localhost:9999/Season/Toggle",
+                fetch(server_season_toggle_url,
                     {
                         method: "PUT",
                         headers: {
@@ -26,7 +27,7 @@ module.exports = {
                     .then((result) => {
                         console.log(result);
                         if (result.status === 404) {
-                            fetch("http://localhost:9999/Season/Create",
+                            fetch(server_season_create_url,
                                 {
                                     method: "POST",
                                     headers: {
@@ -51,7 +52,7 @@ module.exports = {
             }
             else if(args[0].toLowerCase() ==="end")
             {
-                fetch("http://localhost:9999/Season/Toggle",
+                fetch(server_season_toggle_url,
                     {
                         method: "PUT",
                         headers: {

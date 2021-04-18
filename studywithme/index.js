@@ -57,7 +57,6 @@ Season.init({
     season_number: sequelize.DataTypes.BIGINT,
     server_avatar: sequelize.DataTypes.TEXT,
     server_id: sequelize.DataTypes.BIGINT,
-    serveruser_id: sequelize.DataTypes.TEXT,
     user_avatar: sequelize.DataTypes.TEXT,
     user_id: sequelize.DataTypes.TEXT,
     total_hours: sequelize.DataTypes.BIGINT,
@@ -85,11 +84,19 @@ orm.sync()
      */
     async function getServer(object)
     {
-        return await Server.findOne({
-            where: {
-                server_id: {[sequelize.Op.eq]: object.server_id}
-            },
-        });
+        if(typeof object === "object") {
+            return await Server.findOne({
+                where: {
+                    server_id: {[sequelize.Op.eq]: BigInt(object.server_id)}
+                },
+            });
+        }else{
+            return await Server.findOne({
+                where: {
+                    server_id: {[sequelize.Op.eq]: BigInt(object)}
+                },
+            });
+        }
     }
 
         //http://localhost:9999/Ping
@@ -151,7 +158,8 @@ orm.sync()
     app.put("/Season/Toggle", (request,response)=>{
         let server_info = request.body;
         let isServer = null;
-        getServer(server_info.server_id).then((result)=>{
+        getServer(server_info.server_id)
+            .then((result)=>{
             isServer = result;
         })
         if( isServer === null)
@@ -214,32 +222,41 @@ orm.sync()
             response.json({"Error:":server_info});
         }
     })
-    app.put("/Season/Update",(request,response)=>{
-        let season = request.body;
+    app.put("/Season/Update",async (request,response)=>{
+        let {server_user_season,hours} = request.body;
+        let season = await Season.findOne({
+            where: {
+                server_user_season: {
+                    [sequelize.Op.eq]:
+                        (server_user_season)
+                }
+            }
+        })
+        season.total_hours = parseInt(hours) + parseInt(season.total_hours);
+        season.save();
 
-        season.to_update.total_hours += BigInt(season.hours);
     })
         /**
          * /Entry will add a user entry to the entry database and update their position in the season. If a season isn't
          * started this won't go through fully, and if a user isn't in the season yet, this will create a new position
          * for them.
          */
-    app.post("/Entry", (request,response) => {
+    app.post("/Entry", async (request,response) => {
 
 
         //makes sure that the fields provided by the bot are good
         let user_entry = request.body;
 
-        getServer(user_entry)
-            .then((server_info)=>
-        {
+        let server_info = await getServer(user_entry)
+
+
             //checks to see if the server has a season so it can then find the season to compress the entry to,
             if (server_info == null || server_info.off_season) {
                 response.status(404);
                 response.json("server off season");
             } else {
                 //creates an entry
-                Entry.create({
+                await Entry.create({
                     serveruser_id: user_entry.server_id + "|" + user_entry.user_id,
                     server_avatar: user_entry.server_avatar,
                     server_id: BigInt(user_entry.server_id),
@@ -249,7 +266,7 @@ orm.sync()
                     proof: user_entry.proof
                 })
                 //fetching to find a Season entry for the user
-                Season.findOne({
+               let season = await Season.findOne({
                     where: {
                         server_user_season: {
                             [sequelize.Op.eq]:
@@ -259,10 +276,10 @@ orm.sync()
                         }
                     }
                 })
-                    .then((season) => {
+
                         //if the season doesn't exist we'll create it
                         if (season === null) {
-                            Season.create({
+                            await Season.create({
                                     server_user_season: (user_entry.server_id + "|"
                                         + user_entry.user_id + "|" + server_info.season_number),
                                     season_number: BigInt(server_info.season_number),
@@ -274,21 +291,18 @@ orm.sync()
                                 }
                             )
                             response.status(200);
-                            response.json("Entry added and season position updated!");
+
 
 
                         } else {
-                            response.status(201);
-                            response.json({
-                                to_update:season,
-                                hours: user_entry.hours
-                            });
+                            response.status(500);
+                            response.json({"error": "player already in season"});
+
                         }
 
 
-                    })
             }
-        })
+
 
 
         response.send();
@@ -298,17 +312,24 @@ orm.sync()
         /**
          * this route finds season results for a user
          */
-     app.get("/Season/:user", (request, response) => {
-        let user = request.body;
-        let season = getServer(user).season_number;
+     app.get("/Season/:serveruser_id", async(request, response) => {
+        let user = request.params.serveruser_id;
+        let ids = user.split("|");
+        let season = await Server.findOne({
+             where: {
+                 server_id: {[sequelize.Op.eq]: BigInt(ids[0])}
+             },
+         });
+            let {season_number} = season;
                 Season.findOne({
                     where: {
                         server_user_season: {
                             [sequelize.Op.eq]:
-                                (user.server_id + "|" + user.user_id + "|" + season)
+                                ( user+"|" + season_number)
                         }
                     }
                 })
+
                     .then((results)=>{
                         if(results === null)
                         {
