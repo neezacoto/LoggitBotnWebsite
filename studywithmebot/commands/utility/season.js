@@ -1,5 +1,5 @@
 const fetch = require('node-fetch');
-const {server_season_toggle_url, server_season_create_url} = require('../../endpoints.json');
+const {server_season_toggle_url, server_season_create_url,server_url} = require('../../endpoints.json');
 module.exports = {
     name: 'season',
     description: 'Starts and ends seasons.',
@@ -7,7 +7,7 @@ module.exports = {
     usage: '<start> or <end>; to start or end the season',
     args: true,
     cooldown: 10,
-    execute(message, args) {
+    async execute(message, args) {
         if(args.length === 1) {
             //gets the server id
             let entry = {
@@ -16,7 +16,9 @@ module.exports = {
             }
             message.channel.send("\`\`\`"+JSON.stringify(entry)+"\`\`\`");
             if(args[0].toLowerCase() ==="start") {
-                fetch(server_season_toggle_url,
+                let {off_season} = await fetch(server_url, {method: "GET"})
+                if(off_season){
+                fetch(server_season_toggle_url+message.guild.id,
                     {
                         method: "PUT",
                         headers: {
@@ -49,28 +51,51 @@ module.exports = {
                         }
 
                     })
+            }else{
+                    message.reply("the season is already in progress.")
+                }
             }
             else if(args[0].toLowerCase() ==="end")
             {
-                fetch(server_season_toggle_url,
-                    {
-                        method: "PUT",
-                        headers: {
-                            "Content-Type": "application/json"
-                        },
-                        body: JSON.stringify(entry)
-                    })
-                    .then((result)=>{
-                    if (result.status === 404) {
-                        message.channel.send("There is no season to end. Please start a season first.")
-                    }else if(result.status === 200)
-                    {
-                        message.channel.send("Season has ended!");
-                    }else{
-                        message.channel.send("Something went wrong with ending the server");
-                    }
 
-                })
+                let bot_message = await message.reply('This command will end the season.\n'
+                    + 'Confirm with 🟢 or cancel with 🔴, to end the season.')
+
+                bot_message.react('🟢').then(r => {
+                    bot_message.react('🔴');
+                });
+
+                // First argument is a filter function
+                bot_message.awaitReactions((reaction, user) => user.id === bot_message.author.id && (reaction.emoji.name === `🟢` || reaction.emoji.name === '🔴'),
+                    {max: 1, time: 30000}).then(collected => {
+                    if (collected.first().emoji.name === '🟢') {
+
+                        fetch(server_season_toggle_url,
+                            {
+                                method: "PUT",
+                                headers: {
+                                    "Content-Type": "application/json"
+                                },
+                                body: JSON.stringify(entry)
+                            })
+                            .then((result)=>{
+                                if (result.status === 404) {
+                                    message.channel.send("There is no season to end. Please start a season first.")
+                                }else if(result.status === 200)
+                                {
+                                    message.channel.send("Season has ended!");
+                                }else{
+                                    message.channel.send("Something went wrong with ending the server");
+                                }
+
+                            })
+
+                    } else
+                        message.channel.send('Cancelled.');
+                }).catch(() => {
+                    message.reply('No reaction after 30 seconds, operation canceled');
+                });
+
             }
             else{
                 message.channel.send("The arguments are **start** or **end**, for creating or ending a season.")

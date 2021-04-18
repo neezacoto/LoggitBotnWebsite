@@ -108,6 +108,20 @@ orm.sync()
         response.send({ping: "Pong!"});
     })
         /**
+         * gets the information about a particular server
+         */
+    app.get("/Server/:server_id", async(request,response)=>{
+        let server_id = request.params.server_id;
+        let server = await getServer(server_id);
+        if(server === null || server === undefined)
+        {
+            response.status(404);
+        }else{
+            response.status(200)
+            response.json(server);
+        }
+    })
+        /**
          * returns an array with the top user objects filtered from the Season table
          */
     app.get("/Season/Leaderboard",(request,response)=>{
