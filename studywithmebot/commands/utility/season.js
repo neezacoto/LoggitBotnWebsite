@@ -16,9 +16,10 @@ module.exports = {
             }
             //message.channel.send("\`\`\`"+JSON.stringify(entry)+"\`\`\`");
             if(args[0].toLowerCase() ==="start") {
-                let {off_season} = await fetch(server_url, {method: "GET"})
+                let server = await fetch(server_url+message.guild.id, {method: "GET"})
+                let {off_season} = await server.json();
                 if(off_season){
-                fetch(server_season_toggle_url+message.guild.id,
+                fetch(server_season_toggle_url,
                     {
                         method: "PUT",
                         headers: {
