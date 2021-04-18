@@ -14,7 +14,7 @@ module.exports = {
                 server_id: message.guild.id,
                 arg: args[0]
             }
-            message.channel.send("\`\`\`"+JSON.stringify(entry)+"\`\`\`");
+            //message.channel.send("\`\`\`"+JSON.stringify(entry)+"\`\`\`");
             if(args[0].toLowerCase() ==="start") {
                 let {off_season} = await fetch(server_url, {method: "GET"})
                 if(off_season){
@@ -63,10 +63,10 @@ module.exports = {
 
                 bot_message.react('🟢').then(r => {
                     bot_message.react('🔴');
-                });
+                })
 
                 // First argument is a filter function
-                bot_message.awaitReactions((reaction, user) => user.id === bot_message.author.id && (reaction.emoji.name === `🟢` || reaction.emoji.name === '🔴'),
+                bot_message.awaitReactions((reaction, user) => user.id === message.author.id && (reaction.emoji.name === `🟢` || reaction.emoji.name === '🔴'),
                     {max: 1, time: 30000}).then(collected => {
                     if (collected.first().emoji.name === '🟢') {
 

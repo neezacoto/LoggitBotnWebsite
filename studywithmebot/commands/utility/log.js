@@ -20,10 +20,9 @@ module.exports = {
                 hours: args[0], //hours
                 proof: args[1],
             }
-            message.channel.send("\`\`\`"+JSON.stringify(entry)+"\`\`\`");
+            //message.channel.send("\`\`\`"+JSON.stringify(entry)+"\`\`\`");
             let check = await fetch(season_user_url+entry.serveruser_id,{
-                        method: "GET"}
-                        )
+                        method: "GET"})
 
             if(check.status === 404 )
             {

@@ -169,37 +169,36 @@ orm.sync()
         /**
          * updates a server's season to on season if they exist and are off season
          */
-    app.put("/Season/Toggle", (request,response)=>{
+    app.put("/Season/Toggle", async (request,response)=>{
         let server_info = request.body;
-        let isServer = null;
-        getServer(server_info.server_id)
-            .then((result)=>{
-            isServer = result;
-        })
-        if( isServer === null)
+        let isServer = await getServer(server_info.server_id)
+
+        if(isServer === null)
         {
             response.status(404);
             response.json("Error: Wrong end point: There is no Season to update");
         }else{
             Server.findOne({
-                server_id: { [sequelize.Op.eq]: server_info.server_id}
+                server_id: { [sequelize.Op.eq]: BigInt(server_info.server_id)}
 
             })
                 .then((server)=> {
                     //if it is off season, start the season
-                    if (!(server.off_season) && server_info.arg.toLowerCase() === "start") {
+                    if (server.off_season && server_info.arg.toLowerCase() === "start") {
                         response.json({
                             season_number: server.season_number + 1
                         });
                         server.season_number += 1;
                         server.off_season = false;
                         response.status(200);
+                        server.save();
                     }
                     //if the season is on, end it
-                    else if(server.off_season && server_info.arg.toLowerCase() === "end" ){
+                    else if(!(server.off_season) && server_info.arg.toLowerCase() === "end" ){
                         server.off_season = true;
                         response.status(200);
                         response.json("The season is over!");
+                        server.save();
                     }else{
                         response.status(500);
                         response.json({"error": server})
