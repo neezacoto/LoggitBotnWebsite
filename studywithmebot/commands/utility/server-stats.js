@@ -14,7 +14,7 @@ module.exports = {
 
         let server_req = await fetch(server_url+message.guild.id,{method: "GET"})
         let {season_number,off_season,logging} = await server_req.json();
-        let season_status = (off_season)? "currently on off-season.":"in progress!";
+        let season_status = (off_season)? "in off-season.":"in progress!";
                 const embed = new Discord.MessageEmbed()
                     .setTitle(`${message.guild.name} Server Information:`)
                     .setThumbnail(message.guild.iconURL())
@@ -22,8 +22,8 @@ module.exports = {
                     .setFooter(`Use ${prefix}top to view the leaderboard!`, message.client.user.avatarURL())
                     .addFields({
                         name: "Stats:",
-                        value: `\`\`\`Season Number: ${season_number}\nSeason Status:${season_status}
-Member Count: ${message.guild.memberCount}\nCurrently Logging: ${logging}\n\`\`\``
+                        value: `\`\`\`Season Number: ${season_number}\nSeason Status: ${season_status}
+Member Count: ${message.guild.memberCount}\nMembers Logging: ${logging}\n\`\`\``
                     });
                 message.channel.send(embed);
 
