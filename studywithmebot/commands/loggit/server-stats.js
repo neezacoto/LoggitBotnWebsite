@@ -7,7 +7,7 @@ module.exports = {
     type: 'server',
     description: 'See server stats.',
     guildOnly:true,
-    usage: '<start> or <end>; to start or end the season',
+    usage: ' ',
     args: false,
     cooldown: 10,
     async execute(message, args) {

@@ -156,22 +156,28 @@ orm.sync()
         /**
          * wipes all entries from a server, which most likely is a result from ending a season
          */
-    app.delete("/Entry/Wipe/:id", (request, response)=>{
+    app.delete("/Entry/:id", async(request, response)=>{
         let server_info = request.params.id;
-        let server = getServer(server_info.server_id);
+        let server = await getServer(server_info);
         if(server === null) {
             response.status(500);
             response.json("Error: Wrong end point: There is no Season to update");
         }else{
-            Entry.findAll({
+            let entries = await Entry.destroy({
                 where: {
-                    server_id: { [sequelize.Op.eq]: server.server_id}
+                    server_id: { [sequelize.Op.eq]: BigInt(server_info)}
                 }
-            }).then((results)=>{
-                results.delete();
-                response.status(200);
-                response.json("")
             })
+            if(entries === 0)
+            {
+                response.status(200);
+                response.json("");
+
+            }else{
+                response.status(500);
+                response.json("");
+            }
+
         }
     })
         /**
@@ -187,7 +193,9 @@ orm.sync()
             response.json("Error: Wrong end point: There is no Season to update");
         }else{
             Server.findOne({
+                where:{
                 server_id: { [sequelize.Op.eq]: BigInt(server_info.server_id)}
+                }
 
             })
                 .then((server)=> {

@@ -3,6 +3,7 @@ module.exports = {
     name: 'avatar',
     type: 'utility',
     aliases: ['icon','pfp','av'],
+    description: "used to retrieve avatars",
     args: false,
     cooldown: 5,
     usage: '<user>',

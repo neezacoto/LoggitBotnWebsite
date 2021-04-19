@@ -1,9 +1,10 @@
 const fetch = require('node-fetch');
-const {server_season_toggle_url, server_season_create_url,server_url} = require('../../endpoints.json');
+const {server_season_toggle_url, server_season_create_url,server_url,entry_wipe_url} = require('../../endpoints.json');
 module.exports = {
     name: 'season',
     type: 'season',
     description: 'Starts and ends seasons.',
+    permissions: 'MANAGE_CHANNELS',
     guildOnly:true,
     usage: '<start> or <end>; to start or end the season',
     args: true,
@@ -15,10 +16,10 @@ module.exports = {
                 server_id: message.guild.id,
                 arg: args[0]
             }
+            let server = await fetch(server_url+message.guild.id, {method: "GET"})
+            let {off_season} = await server.json();
             //message.channel.send("\`\`\`"+JSON.stringify(entry)+"\`\`\`");
             if(args[0].toLowerCase() ==="start") {
-                let server = await fetch(server_url+message.guild.id, {method: "GET"})
-                let {off_season} = await server.json();
                 if(off_season){
                 fetch(server_season_toggle_url,
                     {
@@ -53,50 +54,56 @@ module.exports = {
                         }
 
                     })
+
             }else{
                     message.reply("the season is already in progress.")
                 }
             }
-            else if(args[0].toLowerCase() ==="end")
-            {
+            else if(args[0].toLowerCase() ==="end") {
+                if (!off_season)
+                {
 
-                let bot_message = await message.reply('This command will end the season.\n'
-                    + 'Confirm with 🟢 or cancel with 🔴, to end the season.')
+                    let bot_message = await message.reply('This command will end the season.\n'
+                        + 'Confirm with 🟢 or cancel with 🔴, to end the season.')
 
-                bot_message.react('🟢').then(r => {
-                    bot_message.react('🔴');
-                })
+                    bot_message.react('🟢').then(r => {
+                        bot_message.react('🔴');
+                    })
 
-                // First argument is a filter function
-                bot_message.awaitReactions((reaction, user) => user.id === message.author.id && (reaction.emoji.name === `🟢` || reaction.emoji.name === '🔴'),
-                    {max: 1, time: 30000}).then(collected => {
-                    if (collected.first().emoji.name === '🟢') {
+                    // First argument is a filter function
+                    bot_message.awaitReactions((reaction, user) => user.id === message.author.id && (reaction.emoji.name === `🟢` || reaction.emoji.name === '🔴'),
+                        {max: 1, time: 30000}).then(collected => {
+                        if (collected.first().emoji.name === '🟢') {
 
-                        fetch(server_season_toggle_url,
-                            {
-                                method: "PUT",
-                                headers: {
-                                    "Content-Type": "application/json"
-                                },
-                                body: JSON.stringify(entry)
-                            })
-                            .then((result)=>{
-                                if (result.status === 404) {
-                                    message.channel.send("There is no season to end. Please start a season first.")
-                                }else if(result.status === 200)
+                            fetch(server_season_toggle_url,
                                 {
-                                    message.channel.send("Season has ended!");
-                                }else{
-                                    message.channel.send("Something went wrong with ending the server");
-                                }
+                                    method: "PUT",
+                                    headers: {
+                                        "Content-Type": "application/json"
+                                    },
+                                    body: JSON.stringify(entry)
+                                })
+                                .then((result) => {
+                                    if (result.status === 404) {
+                                        message.channel.send("There is no season to end. Please start a season first.")
+                                    } else if (result.status === 200) {
+                                        message.channel.send("Season has ended!");
+                                    } else {
+                                        message.channel.send("There is no season to end");
+                                    }
 
-                            })
+                                })
+                            fetch(entry_wipe_url + message.guild.id, {method: "DELETE"})
+                                .then((req) => {
+                                    message.channel.send("Entries cleaned");
+                                })
 
-                    } else
-                        message.channel.send('Cancelled.');
-                }).catch(() => {
-                    message.reply('No reaction after 30 seconds, operation canceled');
-                });
+                        } else
+                            message.channel.send('Cancelled.');
+                    }).catch(() => {
+                        message.reply('No reaction after 30 seconds, operation canceled');
+                    });
+                }else{message.reply("there is no season to end.")}
 
             }
             else{

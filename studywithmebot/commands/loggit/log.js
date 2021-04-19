@@ -51,17 +51,28 @@ module.exports = {
             }
                 else{
                     let {server_user_season} = await check.json();
-                    fetch(season_update_url,
-                        {
-                            method: "PUT",
-                            headers: {
-                                "Content-Type": "application/json"
-                            },
-                            body: JSON.stringify({
-                                server_user_season: server_user_season,
-                                hours: entry.hours})
-                        })
+                fetch(entry_url,
+                    {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json"
+                        },
+                        body: JSON.stringify(entry)
+                    })
+                    .then((result)=> {
+                        fetch(season_update_url,
+                            {
+                                method: "PUT",
+                                headers: {
+                                    "Content-Type": "application/json"
+                                },
+                                body: JSON.stringify({
+                                    server_user_season: server_user_season,
+                                    hours: entry.hours
+                                })
+                            })
                         message.channel.send("Successfully logged!")
+                    })
                 }
         }else{
             message.channel.send("Please put <hours> <discord link of proof>");
