@@ -1,12 +1,13 @@
 const fetch = require('node-fetch');
+const {ping_url} = require('../../endpoints.json');
 module.exports = {
     name: 'pingweb',
     type: "fun",
-    description: 'PingWeb!',
+    description: 'get Ponged by the webserver!',
     guildOnly:true,
     cooldown: 10,
     async execute(message, args) {
-        const { ping } = await fetch(`http://localhost:9999/Ping`)
+        const { ping } = await fetch(ping_url)
             .then((result)=>{
                 console.log(result);
                     return result.json();

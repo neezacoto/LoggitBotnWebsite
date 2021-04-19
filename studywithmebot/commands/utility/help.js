@@ -54,7 +54,7 @@ module.exports = {
             const embed = new Discord.MessageEmbed()
                 .setTitle(`Here\'s a list of all my commands:`)
                 .setThumbnail(message.client.user.avatarURL())
-                .setColor("#127afa")
+                .setColor("#5ef666")
                 .setFooter(`Current prefix is "${prefix}"`,client.user.avatarURL())
                 .addFields(
                     {
@@ -92,8 +92,8 @@ module.exports = {
                 const name = args[0].toLowerCase();
                 const command = commands.get(name) || commands.find(c => c.aliases && c.aliases.includes(name));
                 const toSay = (`\n**${prefix}${command.name}:**
-Description: ${command.description || 'no description'}
-Usage: \`\`${prefix}${command.name} ${command.usage || `no usage description`}\`\``);
+\`\`\`Description: ${command.description || 'no description'}
+Usage: ${prefix}${command.name} ${command.usage || `no usage description`}\`\`\``);
                 message.reply(toSay);
             }
             catch(error)

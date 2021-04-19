@@ -1,8 +1,10 @@
 module.exports = {
-    name: 'frog',
+    name: 'ribbit',
     type: "fun",
+    aliases: ['frog'],
     description: 'get a picture of a random frog!',
     guildOnly:true,
+    usage: " ",
     cooldown: 3,
     async execute(message, args) {
         let num = `${Math.floor(Math.random() * 54) + 1}`;

@@ -118,7 +118,15 @@ orm.sync()
             response.status(404);
         }else{
             response.status(200)
-            response.json(server);
+            Season.count({
+                where: {server_id: { [sequelize.Op.eq]: server_id}}
+            })
+                .then((count)=>{
+                    server.dataValues['logging'] = count;
+                    response.json(server)
+                })
+
+
         }
     })
         /**
