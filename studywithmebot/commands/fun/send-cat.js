@@ -1,6 +1,7 @@
 const fetch = require('node-fetch');
 module.exports = {
     name: 'cat',
+    type: "fun",
     description: 'get a picture of a random cat!',
     guildOnly:true,
     cooldown: 5,

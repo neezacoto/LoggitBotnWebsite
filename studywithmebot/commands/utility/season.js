@@ -2,6 +2,7 @@ const fetch = require('node-fetch');
 const {server_season_toggle_url, server_season_create_url,server_url} = require('../../endpoints.json');
 module.exports = {
     name: 'season',
+    type: 'season',
     description: 'Starts and ends seasons.',
     guildOnly:true,
     usage: '<start> or <end>; to start or end the season',

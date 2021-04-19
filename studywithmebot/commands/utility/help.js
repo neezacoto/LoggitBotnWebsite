@@ -1,9 +1,14 @@
 const { prefix } = require('../../config.json');
 const Discord = require('discord.js');
 const fs = require('fs');
-
+const filter_type = (cmds,cmd,type)=>{
+    return cmds.filter((cmd)=>{
+        return cmd === type;
+    });
+}
 module.exports = {
     name: 'help',
+    type: 'utility',
     description: 'List of all the commands and info',
     aliases: ['commands'],
     usage: '[command]',
@@ -13,13 +18,39 @@ module.exports = {
         const client = message.client;
         // getting the commands collection from the messages client coming from the index
         const { commands } = message.client;
-        const fun = [];
-        const moderation = [];
-        const util = [];
+
 
         const commandFolders = fs.readdirSync('./commands');
 
         if (!args.length) {
+            let fun = commands.filter((cmd)=>{
+                return cmd.type === "fun";
+            });
+            let user = commands.filter((cmd)=>{
+                return cmd.type === "user";
+            });
+            let server = commands.filter((cmd)=>{
+                return cmd.type === "server";
+            });
+            let season = commands.filter((cmd)=>{
+                return cmd.type === "season";
+            });
+            let types = [fun,user,server,season];
+            for(let i = 0; i<types.length;i++)
+            {
+
+                 types[i]=(types[i].map(
+                    command => `\`\`${prefix}${command.name}:\`\` ${command.description || 'no description'}`
+                ).join('\n')).toString()
+            }
+            for(let i = 0; i<types.length;i++)
+            {
+                if(types[i] === "")
+                {
+                    types[i] = "no commands yet";
+                }
+            }
+
             const embed = new Discord.MessageEmbed()
                 .setTitle(`Here\'s a list of all my commands:`)
                 .setThumbnail(message.client.user.avatarURL())
@@ -27,11 +58,22 @@ module.exports = {
                 .setFooter(`Current prefix is "${prefix}"`,client.user.avatarURL())
                 .addFields(
                     {
-                        name: "Commands",
-                        value: (commands.map(
-                            command => `**${prefix}${command.name}:** ${command.description || 'no description'}`
-                        ).join('\n')).toString()
-                    });
+                        name: "Fun:",
+                        value: types[0]
+                    },
+                    {
+                        name: "User:",
+                        value: types[1]
+                    },
+                    {
+                        name: "Server:",
+                        value: types[2]
+                    },
+                    {
+                        name: "Season",
+                        value: types[3]
+                    }
+                    );
 
             message.reply(embed);
             //dms method if I even want to do that

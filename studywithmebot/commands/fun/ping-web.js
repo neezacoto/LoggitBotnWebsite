@@ -1,6 +1,7 @@
 const fetch = require('node-fetch');
 module.exports = {
     name: 'pingweb',
+    type: "fun",
     description: 'PingWeb!',
     guildOnly:true,
     cooldown: 10,

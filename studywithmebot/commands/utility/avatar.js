@@ -1,6 +1,7 @@
 const Discord = require('discord.js');
 module.exports = {
     name: 'avatar',
+    type: 'utility',
     aliases: ['icon','pfp','av'],
     args: false,
     cooldown: 5,
@@ -22,7 +23,7 @@ module.exports = {
             .setImage(user.avatarURL())
             .setColor("#ababab");
 
-        return message.channel.send(embed + "args: "+args[0])
+        return message.channel.send(embed)
     }
 
 }

@@ -2,6 +2,7 @@ const fetch = require('node-fetch');
 const {entry_url, season_update_url, season_user_url} = require('../../endpoints.json');
 module.exports = {
     name: 'log',
+    type: 'user',
     description: 'Logs hours into Loggit.',
     guildOnly:true,
     usage: '<hours> <discord link proof>',
