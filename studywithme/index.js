@@ -276,59 +276,60 @@ orm.sync()
 
         let server_info = await getServer(user_entry)
 
-
-            //checks to see if the server has a season so it can then find the season to compress the entry to,
-            if (server_info == null || server_info.off_season) {
-                response.status(404);
-                response.json("server off season");
-            } else {
-                //creates an entry
-                await Entry.create({
-                    serveruser_id: user_entry.server_id + "|" + user_entry.user_id,
-                    server_avatar: user_entry.server_avatar,
-                    server_id: BigInt(user_entry.server_id),
-                    user_avatar: user_entry.user_avatar,
-                    user_id: user_entry.user_id,
-                    hours: BigInt(user_entry.hours),
-                    proof: user_entry.proof
-                })
-                //fetching to find a Season entry for the user
-               let season = await Season.findOne({
-                    where: {
-                        server_user_season: {
-                            [sequelize.Op.eq]:
-                                (user_entry.server_id + "|" +
-                                    user_entry.user_id + "|" +
-                                    server_info.season_number)
+            try {
+                //checks to see if the server has a season so it can then find the season to compress the entry to,
+                if (server_info == null || server_info.off_season) {
+                    response.status(404);
+                    response.json("server off season");
+                } else {
+                    //creates an entry
+                    await Entry.create({
+                        serveruser_id: user_entry.server_id + "|" + user_entry.user_id,
+                        server_avatar: user_entry.server_avatar,
+                        server_id: BigInt(user_entry.server_id),
+                        user_avatar: user_entry.user_avatar,
+                        user_id: user_entry.user_id,
+                        hours: BigInt(user_entry.hours),
+                        proof: user_entry.proof
+                    })
+                    //fetching to find a Season entry for the user
+                    let season = await Season.findOne({
+                        where: {
+                            server_user_season: {
+                                [sequelize.Op.eq]:
+                                    (user_entry.server_id + "|" +
+                                        user_entry.user_id + "|" +
+                                        server_info.season_number)
+                            }
                         }
+                    })
+
+                    //if the season doesn't exist we'll create it
+                    if (season === null) {
+                        await Season.create({
+                                server_user_season: (user_entry.server_id + "|"
+                                    + user_entry.user_id + "|" + server_info.season_number),
+                                season_number: BigInt(server_info.season_number),
+                                server_avatar: user_entry.server_avatar,
+                                server_id: BigInt(server_info.server_id),
+                                user_avatar: user_entry.user_avatar,
+                                user_id: user_entry.user_id,
+                                total_hours: BigInt(user_entry.hours)
+                            }
+                        )
+                        response.status(200);
+
+
+                    } else {
+                        response.status(200);
                     }
-                })
-
-                        //if the season doesn't exist we'll create it
-                        if (season === null) {
-                            await Season.create({
-                                    server_user_season: (user_entry.server_id + "|"
-                                        + user_entry.user_id + "|" + server_info.season_number),
-                                    season_number: BigInt(server_info.season_number),
-                                    server_avatar: user_entry.server_avatar,
-                                    server_id: BigInt(server_info.server_id),
-                                    user_avatar: user_entry.user_avatar,
-                                    user_id: user_entry.user_id,
-                                    total_hours: BigInt(user_entry.hours)
-                                }
-                            )
-                            response.status(200);
 
 
-
-                        } else {
-                            response.status(500);
-                            response.json({"error": "player already in season"});
-
-                        }
-
-
-            }
+                }
+            }catch(e){
+            response.status(500)
+                response.json({"error": "wrong num"});
+        }
 
 
 
