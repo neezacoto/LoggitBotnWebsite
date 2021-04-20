@@ -129,27 +129,6 @@ orm.sync()
 
         }
     })
-        /**
-         * returns an array with the top user objects filtered from the Season table
-         */
-    app.get("/Season/Leaderboard/:server_id",(request,response)=>{
-        let server_id = request.params.server_id;
-
-        let server = getServer(server_id);
-
-        Season.findAll({
-            where: {
-                server_id: { [sequelize.Op.eq]: server_id},
-                season_number: { [sequelize.Op.eq]: server.season_number}
-            }
-        }).then((users)=>{
-           users.sort((a,b)=> (a.total_hours > b.total_hours)? 1 : -1);
-
-               let top_num_of_people =(users.length > 10)? 9 : users.length-1;
-               return users.splice(0,top_num_of_people);
-
-        })
-    })
 
         /**
          * wipes all entries from a server, which most likely is a result from ending a season
@@ -335,6 +314,29 @@ orm.sync()
 
         response.send();
     })
+
+        /**
+         * returns an array with the top user objects filtered from the Season table
+         */
+        app.get("/Season/Leaderboard/",async (request,response)=>{
+            let season_number = request.query.season_number;
+            let server_id = request.query.server_id;
+            let server = await getServer(server_id);
+            let user = {};
+            let to_use = (season_number !== -1)? season_number : server.season_number
+
+            Season.findAll({
+                where: {
+                    server_id: { [sequelize.Op.eq]: server_id},
+                    season_number: { [sequelize.Op.eq]: to_use}
+                }
+            }).then(async(users)=>{
+                users.sort( (a,b)=> (parseInt(a.total_hours) < parseInt(b.total_hours))? 1 : -1);
+
+                user['seasons'] = (users.length > 10)? await users.splice(0,9): users;
+                response.json(user);
+            })
+        })
 
         /**
          * returns season information about a user

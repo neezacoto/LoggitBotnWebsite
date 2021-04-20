@@ -3,7 +3,7 @@ const {server_season_toggle_url, server_season_create_url,server_url,entry_wipe_
 module.exports = {
     name: 'season',
     type: 'season',
-    description: 'Starts and ends seasons.',
+    description: 'Starts and ends seasons. [mod]',
     permissions: 'MANAGE_CHANNELS',
     guildOnly:true,
     usage: '<start> or <end>; to start or end the season',
