@@ -12,7 +12,7 @@ module.exports = {
     cooldown: 10,
      async execute(message, args) {
          //console.log(entry_url +" " + season_update_url);
-        if(parseInt(args[0])<=1440)
+        if(parseInt(args[0])<=1440&&parseInt(args[0])>0)
          {
          let server_req = await fetch(server_url + message.guild.id, {method: "GET"})
          let {off_season} = await server_req.json();
@@ -77,7 +77,7 @@ module.exports = {
                              })
                      } else {
                          let {server_user_season} = await check.json();
-                         fetch(entry_url,
+                         let result = await fetch(entry_url,
                              {
                                  method: "POST",
                                  headers: {
@@ -85,7 +85,7 @@ module.exports = {
                                  },
                                  body: JSON.stringify(entry)
                              })
-                             .then((result) => {
+
                                  if (result.status === 200) {
                                      fetch(season_update_url,
                                          {
@@ -98,12 +98,15 @@ module.exports = {
                                                  hours: entry.hours
                                              })
                                          })
-                                     message.channel.send("Successfully logged!")
+                                     let r = await fetch("https://zenquotes.io/api/random",{method: "GET"});
+                                     let quote = await r.json();
+                                     let {q,a} = quote[0];
+                                     message.channel.send(`\`\`Successfully logged!\`\`\n> ${q}\n-${a}`);
                                  } else {
                                      message.reply(`\`\`${args[0]}\`\` is not a valid entry; please use numbers`)
                                      message.delete();
                                  }
-                             })
+                              // here
                      }
                  } else {
                      message.reply("you did not provide a proper image url!\n**I take:** \`\`jpg, png, pdf, webp, and gif\`\`" +
@@ -118,7 +121,7 @@ module.exports = {
          }
      }
      else{
-             message.reply("there is a max of \`\`1440 minutes\`\` for every entry.\n" +
+             message.reply("there is a min of \`\`1 minute\`\` and a max of \`\`1440 minutes\`\` for every entry.\n" +
                  "please try to keep what you log **recent**!")
          }
     },
