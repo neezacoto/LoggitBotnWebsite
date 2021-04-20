@@ -338,19 +338,21 @@ orm.sync()
         /**
          * returns season information about a user
          */
-    app.get("Season/User",async(request, response)=>{
-        let user_info = request.body;
+    app.get("/Season/User",async(request, response)=>{
+        let user_id = request.query.user_id;
+        let server_id = request.query.server_id;
         let user = {};
 
         Season.findAll({
             where: {
-                server_id: { [sequelize.Op.eq]: user_info.server_id},
-                season_number: { [sequelize.Op.eq]: user_info.user_id}
+                server_id: { [sequelize.Op.eq]: BigInt(server_id)},
+                user_id: { [sequelize.Op.eq]: user_id}
             }
-        }).then((results)=>{
-            results.sort((a,b)=> (a.season_number > b.season_number)? 1 : -1);
-            let to_cut = (results.length > 5)? 5 : results.length-1;
-                user['seasons'] = results.splice(0,to_cut);
+        }).then(async (results)=>{
+            results.sort( (a,b)=> (parseInt(a.season_number) < parseInt(b.season_number))? 1 : -1);
+
+             user['seasons'] = (results.length > 5)? await results.splice(0,5): results;
+                response.json(user);
         })
 
 

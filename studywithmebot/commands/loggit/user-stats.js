@@ -1,5 +1,5 @@
 const fetch = require('node-fetch');
-const {server_url} = require('../../endpoints.json');
+const {user_url} = require('../../endpoints.json');
 const {prefix} = require('../../config.json');
 const Discord = require('discord.js');
 module.exports = {
@@ -11,31 +11,38 @@ module.exports = {
     args: false,
     cooldown: 10,
     async execute(message, args) {
-        let user = args[0] || message.author.toString()
+
+        let user = message.mentions.users.first() || message.author
         let entry = {
             server_id: message.guild.id,
-            arg: user
+            arg: user.toString()
         }
-        let server_req = await fetch(server_url+message.guild.id,
+        let server_req = await fetch(user_url+`?user_id=${entry.arg}&server_id=${entry.server_id}`, {method: "GET"})
+        let {seasons} = await server_req.json();
+        let fields = new Array();
+        if (!seasons.length) {
+            message.reply("there's no information for this user :(");
+        } else {
+            let total_hours = 0;
+            for(const season of seasons)
             {
-                method: "GET",
-                headers: {
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify(entry)
-            })
-        let user_seasons = await server_req
+                total_hours += parseInt(season.total_hours);
+            }
+            let temp = seasons.shift()
+            fields.push({name: `:pencil: Season ${temp.season_number}`,value: `Logged: \`\`${temp.total_hours} hours\`\``})
+        for(const season of seasons)
+        {
+            fields.push({name: `Season ${season.season_number}:`,value: `Logged: \`\`${season.total_hours} hours\`\``})
+        }
+
         const embed = new Discord.MessageEmbed()
-            .setTitle(`${message.guild.name} Server Information:`)
-            .setThumbnail(message.guild.iconURL())
+            .setTitle(`-User Stats-`)
+            .setThumbnail(user.avatarURL())
             .setColor("#5ef666")
-            .setFooter(`Use ${prefix}top to view the leaderboard!`, message.client.user.avatarURL())
-            .addFields({
-                name: "Stats:",
-                value: `\`\`\`Season Number: ${season_number}\nSeason Status: ${season_status}
-Member Count: ${message.guild.memberCount}\nMembers Logging: ${logging}\n\`\`\``
-            });
+            .setFooter(`Total hours logged: ${total_hours}`, user.avatarURL())
+            .addFields(fields);
         message.channel.send(embed);
+    }
 
 
     },

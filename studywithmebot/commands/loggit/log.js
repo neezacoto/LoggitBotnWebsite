@@ -27,7 +27,7 @@ module.exports = {
                  }
                  return true;
              };
-             let acceptable_ext = [".jpg",".gif",".png",".pdf"];
+             let acceptable_ext = [".jpg",".gif",".png",".pdf",".webp"];
              let ext_check = false;
              for(const ext of acceptable_ext)
              {
@@ -97,7 +97,7 @@ module.exports = {
                      })
              }
          }else{
-                 message.reply("you did not provide a proper image url!\n**I take:** \`\`jpg, png, pdf, and gif\`\`" +
+                 message.reply("you did not provide a proper image url!\n**I take:** \`\`jpg, png, pdf, webp, and gif\`\`" +
                      " direct links")
                  message.delete()
              }
