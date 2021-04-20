@@ -118,8 +118,8 @@ orm.sync()
             response.status(404);
         }else{
             response.status(200)
-            Season.count({
-                where: {server_id: { [sequelize.Op.eq]: server_id}}
+            Entry.aggregate('user_id', 'count',{
+                distinct: true
             })
                 .then((count)=>{
                     server.dataValues['logging'] = count;
@@ -132,9 +132,9 @@ orm.sync()
         /**
          * returns an array with the top user objects filtered from the Season table
          */
-    app.get("/Season/Leaderboard",(request,response)=>{
-        let server_id = request.query.server;
-        let top_num_of_people = request.query.top;
+    app.get("/Season/Leaderboard/:server_id",(request,response)=>{
+        let server_id = request.params.server_id;
+
         let server = getServer(server_id);
 
         Season.findAll({
@@ -144,12 +144,10 @@ orm.sync()
             }
         }).then((users)=>{
            users.sort((a,b)=> (a.total_hours > b.total_hours)? 1 : -1);
-           if(top_num_of_people === 0 || top_num_of_people === null)
-           {
-               return users;
-           }else{
-               return users.splice(0,top_num_of_people-1);
-           }
+
+               let top_num_of_people =(users.length > 10)? 9 : users.length-1;
+               return users.splice(0,top_num_of_people);
+
         })
     })
 
@@ -337,7 +335,26 @@ orm.sync()
         response.send();
     })
 
+        /**
+         * returns season information about a user
+         */
+    app.get("Season/User",async(request, response)=>{
+        let user_info = request.body;
+        let user = {};
 
+        Season.findAll({
+            where: {
+                server_id: { [sequelize.Op.eq]: user_info.server_id},
+                season_number: { [sequelize.Op.eq]: user_info.user_id}
+            }
+        }).then((results)=>{
+            results.sort((a,b)=> (a.season_number > b.season_number)? 1 : -1);
+            let to_cut = (results.length > 5)? 5 : results.length-1;
+                user['seasons'] = results.splice(0,to_cut);
+        })
+
+
+    })
         /**
          * this route finds season results for a user
          */
