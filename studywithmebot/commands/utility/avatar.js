@@ -9,6 +9,7 @@ module.exports = {
     usage: '<user>',
     execute(message, args) {
 
+        let person = message.mentions.users.first();
         if(!args.length)
         {
             const embed = new Discord.MessageEmbed()

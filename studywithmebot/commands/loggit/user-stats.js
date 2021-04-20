@@ -38,7 +38,7 @@ module.exports = {
         }
 
         const embed = new Discord.MessageEmbed()
-            .setTitle(`-User Stats-`)
+            .setTitle(`-${user.username}'s stats-`)
             .setThumbnail(user.avatarURL())
             .setColor("#5ef666")
             .setFooter(`Total hours logged: ${total_hours}`, user.avatarURL())

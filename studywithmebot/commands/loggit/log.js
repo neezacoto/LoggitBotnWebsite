@@ -7,7 +7,7 @@ module.exports = {
     aliases: ['entry','l'],
     description: 'Logs minutes into Loggit.',
     guildOnly:true,
-    usage: '<minutes> <discord link proof>',
+    usage: '<minutes> <image link proof>',
     args: true,
     cooldown: 10,
      async execute(message, args) {
@@ -46,6 +46,7 @@ module.exports = {
                          user_id: message.author.toString(),
                          hours: args[0], //minutes
                          proof: args[1],
+                         tag_id: `${message.author.username}#${message.author.discriminator}`
                      }
                      //message.channel.send("\`\`\`"+JSON.stringify(entry)+"\`\`\`");
                      let check = await fetch(season_user_url + entry.serveruser_id, {
@@ -95,13 +96,14 @@ module.exports = {
                                              },
                                              body: JSON.stringify({
                                                  server_user_season: server_user_season,
-                                                 hours: entry.hours
+                                                 hours: entry.hours,
+                                                 tag_id: entry.tag_id
                                              })
                                          })
                                      let r = await fetch("https://zenquotes.io/api/random",{method: "GET"});
                                      let quote = await r.json();
                                      let {q,a} = quote[0];
-                                     message.channel.send(`\`\`Successfully logged!\`\`\n> ${q}\n-${a}`);
+                                     message.reply(`\n\`\`Successfully logged!\`\`\n> ${q}\n-${a}`);
                                  } else {
                                      message.reply(`\`\`${args[0]}\`\` is not a valid entry; please use numbers`)
                                      message.delete();
@@ -114,7 +116,7 @@ module.exports = {
                      message.delete()
                  }
              } else {
-                 message.channel.send(`Please put ${prefix}log \`\`<minutes>\`\` \`\`\<discord link of proof>\`\``);
+                 message.channel.send(`Please put ${prefix}log \`\`<minutes>\`\` \`\`\<image link proof>\`\``);
              }
          } else {
              message.channel.send("You can't log during the off-season :(")

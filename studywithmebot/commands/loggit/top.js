@@ -12,10 +12,10 @@ module.exports = {
     async execute(message, args) {
 
         const embed = new Discord.MessageEmbed()
-            .setURL(" ")
+            .setURL("https://www.youtube.com/watch?v=8-NcrRzH0vA")
             .setTitle("Server Leaderboard")
-            .setColor("#ababab")
-            .setImage(message.guild.iconURL())
+            .setColor("#5ef666")
+            .setFooter(`Click on "Server Leaderboard" to view all rankings!`, message.guild.iconURL())
 
         message.channel.send(embed);
     },

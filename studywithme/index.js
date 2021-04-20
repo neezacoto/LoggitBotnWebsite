@@ -11,8 +11,6 @@ let orm = new sequelize.Sequelize({
     logging: orm_login.logging
 });
 
-
-
 /**
  * Server holds information about the season so the entry knows where which season to compile to
  */
@@ -41,7 +39,8 @@ Entry.init({
     user_avatar: sequelize.DataTypes.TEXT,
     user_id: sequelize.DataTypes.TEXT,
     hours: sequelize.DataTypes.BIGINT,
-    proof: sequelize.DataTypes.TEXT
+    proof: sequelize.DataTypes.TEXT,
+    tag_id: sequelize.DataTypes.TEXT
 
 }, {sequelize: orm, modelName: "Entries", timestamps: false});
 
@@ -60,6 +59,7 @@ Season.init({
     user_avatar: sequelize.DataTypes.TEXT,
     user_id: sequelize.DataTypes.TEXT,
     total_hours: sequelize.DataTypes.BIGINT,
+    tag_id: sequelize.DataTypes.TEXT
 
 }, {sequelize: orm, modelName: "Seasons", timestamps: false});
 
@@ -257,7 +257,7 @@ orm.sync()
         }
     })
     app.put("/Season/Update",async (request,response)=>{
-        let {server_user_season,hours} = request.body;
+        let {server_user_season,hours,tag_id} = request.body;
         let season = await Season.findOne({
             where: {
                 server_user_season: {
@@ -267,6 +267,7 @@ orm.sync()
             }
         })
         season.total_hours = parseInt(hours) + parseInt(season.total_hours);
+        season.tag_id = tag_id;
         season.save();
 
     })
@@ -276,7 +277,6 @@ orm.sync()
          * for them.
          */
     app.post("/Entry", async (request,response) => {
-
 
         //makes sure that the fields provided by the bot are good
         let user_entry = request.body;
@@ -297,7 +297,8 @@ orm.sync()
                         user_avatar: user_entry.user_avatar,
                         user_id: user_entry.user_id,
                         hours: BigInt(user_entry.hours),
-                        proof: user_entry.proof
+                        proof: user_entry.proof,
+                        tag_id: user_entry.tag_id
                     })
                     //fetching to find a Season entry for the user
                     let season = await Season.findOne({
@@ -321,7 +322,8 @@ orm.sync()
                                 server_id: BigInt(server_info.server_id),
                                 user_avatar: user_entry.user_avatar,
                                 user_id: user_entry.user_id,
-                                total_hours: BigInt(user_entry.hours)
+                                total_hours: BigInt(user_entry.hours),
+                                tag_id: user_entry.tag_id
                             }
                         )
                         response.status(200);
@@ -342,29 +344,41 @@ orm.sync()
 
         response.send();
     })
+        /**
+         * webpage for displaying all the users ranks within a server's season
+         */
+    app.get("/Season/Leaderboard", (request, response) => {
+        Season.findAll().then((students) => {
+            if (request.headers.accept.includes("text/html")) {
+                response.render("all_students", {students: students})
 
+            } else {
+                response.json(students);
+            }
+        })
+    });
         /**
          * returns an array with the top user objects filtered from the Season table
          */
-        app.get("/Season/Display/",async (request,response)=>{
-            let season_number = request.query.season_number;
-            let server_id = request.query.server_id;
-            let server = await getServer(server_id);
-            let user = {};
-            let to_use = (season_number !== -1)? season_number : server.season_number
+    app.get("/Season/Display/",async (request,response)=>{
+        let season_number = request.query.season_number;
+        let server_id = request.query.server_id;
+        let server = await getServer(server_id);
+        let user = {};
+        let to_use = (season_number !== -1)? season_number : server.season_number
 
-            Season.findAll({
-                where: {
-                    server_id: { [sequelize.Op.eq]: server_id},
-                    season_number: { [sequelize.Op.eq]: to_use}
-                }
-            }).then(async(users)=>{
-                users.sort( (a,b)=> (parseInt(a.total_hours) < parseInt(b.total_hours))? 1 : -1);
+        Season.findAll({
+            where: {
+                server_id: { [sequelize.Op.eq]: server_id},
+                season_number: { [sequelize.Op.eq]: to_use}
+            }
+        }).then(async(users)=>{
+            users.sort( (a,b)=> (parseInt(a.total_hours) < parseInt(b.total_hours))? 1 : -1);
 
-                user['seasons'] = (users.length > 10)? await users.splice(0,9): users;
-                response.json(user);
-            })
+            user['seasons'] = (users.length > 10)? await users.splice(0,9): users;
+            response.json(user);
         })
+    })
 
         /**
          * returns season information about a user
@@ -425,6 +439,9 @@ orm.sync()
 
 
     })
+
+    app
+
         app.listen(9999, () => {
             console.log ("Server started on port 9999");
         })
