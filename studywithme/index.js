@@ -1,15 +1,8 @@
 import Express from 'express'
 import bodyParser from 'body-parser'
 import sequelize from 'sequelize'
-
-let orm = new sequelize.Sequelize({
-    dialect: "postgres",
-    username: "c_rudder1",
-    password: "c_rudder1",
-    database: "c_rudder1",
-    host: "45.79.131.73",
-    logging: false
-});
+import orm_login from './orm.json'
+let orm = new sequelize.Sequelize(orm_login);
 
 
 
