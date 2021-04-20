@@ -2,4 +2,4 @@
 /studywithmebot/node_modules/
 /studywithmebot/config.json
 /studywithmebot/endpoints.json
-/studywithme/orm.json
+/studywithme/orm.js
