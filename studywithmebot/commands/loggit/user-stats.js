@@ -7,6 +7,7 @@ module.exports = {
     type: 'user',
     description: 'See a user\'s stats.',
     guildOnly:true,
+    aliases: ['stats','u'],
     usage: '<user> or nothing to get your own',
     args: false,
     cooldown: 10,
