@@ -2,12 +2,12 @@ const fetch = require('node-fetch');
 const {leaderboard_url} = require('../../endpoints.json');
 const Discord = require('discord.js');
 module.exports = {
-    name: 'top',
+    name: 'display',
     type: 'season',
-    description: 'See a season rankings. [mod]',
+    description: 'Displays season rankings. [mod]',
     guildOnly:true,
     permissions: 'MANAGE_CHANNELS',
-    aliases: ['leaderboard','t','rank'],
+    aliases: ['d'],
     usage: '<season> or nothing to get current season',
     args: false,
     cooldown: 10,
