@@ -5,14 +5,15 @@ module.exports = {
     name: 'log',
     type: 'user',
     aliases: ['entry','l'],
-    description: 'Logs hours into Loggit.',
+    description: 'Logs minutes into Loggit.',
     guildOnly:true,
-    usage: '<hours> <discord link proof>',
+    usage: '<minutes> <discord link proof>',
     args: true,
     cooldown: 10,
      async execute(message, args) {
          //console.log(entry_url +" " + season_update_url);
-
+        if(parseInt(args[0])<=1440)
+         {
          let server_req = await fetch(server_url + message.guild.id, {method: "GET"})
          let {off_season} = await server_req.json();
          if (!off_season) {
@@ -43,7 +44,7 @@ module.exports = {
                          server_id: message.guild.id,
                          user_avatar: message.author.avatarURL(),
                          user_id: message.author.toString(),
-                         hours: args[0], //hours
+                         hours: args[0], //minutes
                          proof: args[1],
                      }
                      //message.channel.send("\`\`\`"+JSON.stringify(entry)+"\`\`\`");
@@ -66,10 +67,10 @@ module.exports = {
                                      message.channel.send("Welcome to the season!")
                                  } else if (result.status === 404) {
                                      message.channel.send("Your server is on off season!")
-                                 } else if (result.status === 500){
+                                 } else if (result.status === 500) {
                                      message.reply(`\`\`${args[0]}\`\` is not a valid entry; please use numbers`)
                                      message.delete();
-                                     }else {
+                                 } else {
                                      message.channel.send("Something went wrong")
                                  }
 
@@ -85,21 +86,20 @@ module.exports = {
                                  body: JSON.stringify(entry)
                              })
                              .then((result) => {
-                                 if(result.status ===200)
-                                 {
-                                 fetch(season_update_url,
-                                     {
-                                         method: "PUT",
-                                         headers: {
-                                             "Content-Type": "application/json"
-                                         },
-                                         body: JSON.stringify({
-                                             server_user_season: server_user_season,
-                                             hours: entry.hours
+                                 if (result.status === 200) {
+                                     fetch(season_update_url,
+                                         {
+                                             method: "PUT",
+                                             headers: {
+                                                 "Content-Type": "application/json"
+                                             },
+                                             body: JSON.stringify({
+                                                 server_user_season: server_user_season,
+                                                 hours: entry.hours
+                                             })
                                          })
-                                     })
-                                 message.channel.send("Successfully logged!")
-                             }else{
+                                     message.channel.send("Successfully logged!")
+                                 } else {
                                      message.reply(`\`\`${args[0]}\`\` is not a valid entry; please use numbers`)
                                      message.delete();
                                  }
@@ -111,11 +111,15 @@ module.exports = {
                      message.delete()
                  }
              } else {
-                 message.channel.send(`Please put ${prefix}log \`\`<hours>\`\` \`\`\<discord link of proof>\`\``);
+                 message.channel.send(`Please put ${prefix}log \`\`<minutes>\`\` \`\`\<discord link of proof>\`\``);
              }
          } else {
              message.channel.send("You can't log during the off-season :(")
          }
-
+     }
+     else{
+             message.reply("there is a max of \`\`1440 minutes\`\` for every entry.\n" +
+                 "please try to keep what you log **recent**!")
+         }
     },
 };

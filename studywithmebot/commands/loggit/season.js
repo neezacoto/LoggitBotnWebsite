@@ -110,7 +110,7 @@ module.exports = {
                 message.channel.send("The arguments are **start** or **end**, for creating or ending a season.")
             }
         }else{
-            message.channel.send("Please put <hours> <discord link of proof>");
+            message.channel.send("Please put <minutes> <discord link of proof>");
         }
 
 

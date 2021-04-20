@@ -29,11 +29,12 @@ module.exports = {
             {
                 total_hours += parseInt(season.total_hours);
             }
+            total_hours = (parseInt(total_hours/60*100))/100;
             let temp = seasons.shift()
-            fields.push({name: `:pencil: Season ${temp.season_number}`,value: `Logged: \`\`${temp.total_hours} hours\`\``})
+            fields.push({name: `:pencil: Season ${temp.season_number}`,value: `Logged: \`\`${temp.total_hours} minutes\`\``})
         for(const season of seasons)
         {
-            fields.push({name: `Season ${season.season_number}:`,value: `Logged: \`\`${season.total_hours} hours\`\``})
+            fields.push({name: `Season ${season.season_number}:`,value: `Logged: \`\`${season.total_hours} minutes\`\``})
         }
 
         const embed = new Discord.MessageEmbed()
