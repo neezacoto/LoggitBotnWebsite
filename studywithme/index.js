@@ -130,6 +130,34 @@ orm.sync()
         }
     })
 
+    app.delete("/Server/User", async (request, response)=>{
+        let server_info = request.body;
+
+
+            let entries = await Entry.destroy({
+                where: {
+                    server_id: { [sequelize.Op.eq]: BigInt(server_info.server_id)},
+                    user_id: { [sequelize.Op.eq]: server_info.user}
+                }
+            })
+        let seasons = await Season.destroy({
+            where: {
+                server_id: { [sequelize.Op.eq]: BigInt(server_info.server_id)},
+                user_id: { [sequelize.Op.eq]: server_info.user}
+            }
+        })
+            if(entries === 0&&seasons === 0)
+            {
+                response.status(200);
+                response.json("");
+
+            }else{
+                response.status(500);
+                response.json("");
+            }
+
+
+    })
         /**
          * wipes all entries from a server, which most likely is a result from ending a season
          */
@@ -318,7 +346,7 @@ orm.sync()
         /**
          * returns an array with the top user objects filtered from the Season table
          */
-        app.get("/Season/Leaderboard/",async (request,response)=>{
+        app.get("/Season/Display/",async (request,response)=>{
             let season_number = request.query.season_number;
             let server_id = request.query.server_id;
             let server = await getServer(server_id);

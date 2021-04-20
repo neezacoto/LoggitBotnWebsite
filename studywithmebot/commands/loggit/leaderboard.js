@@ -4,7 +4,7 @@ const Discord = require('discord.js');
 module.exports = {
     name: 'display',
     type: 'season',
-    description: 'Displays season rankings. [mod]',
+    description: 'Displays season rankings.',
     guildOnly:true,
     permissions: 'MANAGE_CHANNELS',
     aliases: ['d'],

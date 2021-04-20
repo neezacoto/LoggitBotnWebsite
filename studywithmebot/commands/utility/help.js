@@ -78,7 +78,7 @@ module.exports = {
                         value: types[2]
                     },
                     {
-                        name: "Season",
+                        name: "Season [Mod Use]",
                         value: types[3]
                     }
                     );
