@@ -1,17 +1,19 @@
 <html>
 <head>
     <link rel="stylesheet" href="./static/css/loggit_style.css">
+    <script src="/studywithme/static/js/listing-tags.js"></script>
 </head>
 <body>
 <div>
     <%loggers.sort((a, b) => (parseInt(a.total_hours) < parseInt(b.total_hours)) ? 1 : -1);%>
     <table>
-        <tr>
+        <thead>
             <th>Rank</th>
             <th>Avatar</th>
             <th>Username</th>
             <th>Minutes</th>
-        </tr>
+        </thead>
+        <tbody>
     <%let count = 1;%>
     <% for ( let user of loggers ) { %>
             <season-card
@@ -24,6 +26,7 @@
             ></season-card>
         <%count++;%>
     <% } %>
+        </tbody>
 
     </table>
 

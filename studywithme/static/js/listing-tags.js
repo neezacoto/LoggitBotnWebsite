@@ -1,8 +1,5 @@
 class SeasonCard extends HTMLElement {
-
     root;
-
-
     constructor() {
         super();
 
