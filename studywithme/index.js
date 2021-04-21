@@ -347,16 +347,26 @@ orm.sync()
         /**
          * webpage for displaying all the users ranks within a server's season
          */
-    app.get("/Season/Leaderboard", (request, response) => {
-        Season.findAll().then((students) => {
-            if (request.headers.accept.includes("text/html")) {
-                response.render("all_students", {students: students})
-
-            } else {
-                response.json(students);
+    app.get("/Season/List/:server_id", async (request, response) => {
+        let server_id = request.params.server_id;
+        let server = await getServer(server_id);
+        Season.findAll({
+            where: {
+                server_id: {[sequelize.Op.eq]: server_id},
+                season_number: {[sequelize.Op.eq]: server.season_number}
             }
         })
-    });
+            .then((season_loggers) => {
+
+                if (request.headers.accept.includes("text/html")) {
+                    response.render("leaderboard", {loggers: season_loggers})
+
+                } else {
+                    response.json(season_loggers);
+                }
+            })
+
+    })
         /**
          * returns an array with the top user objects filtered from the Season table
          */
@@ -365,7 +375,7 @@ orm.sync()
         let server_id = request.query.server_id;
         let server = await getServer(server_id);
         let user = {};
-        let to_use = (season_number !== -1)? season_number : server.season_number
+        let to_use = (season_number !== "-1")? season_number : server.season_number
 
         Season.findAll({
             where: {
@@ -440,10 +450,10 @@ orm.sync()
 
     })
 
-    app
 
         app.listen(9999, () => {
             console.log ("Server started on port 9999");
         })
 })
+
 

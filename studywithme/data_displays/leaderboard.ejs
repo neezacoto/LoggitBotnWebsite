@@ -1,0 +1,32 @@
+<html>
+<head>
+    <link rel="stylesheet" href="./static/css/loggit_style.css">
+</head>
+<body>
+<div>
+    <%loggers.sort((a, b) => (parseInt(a.total_hours) < parseInt(b.total_hours)) ? 1 : -1);%>
+    <table>
+        <tr>
+            <th>Rank</th>
+            <th>Avatar</th>
+            <th>Username</th>
+            <th>Minutes</th>
+        </tr>
+    <%let count = 1;%>
+    <% for ( let user of loggers ) { %>
+            <season-card
+            class="season-user"
+            rank="<%=count%>"
+            avatar="<%=user.user_avatar%>"
+            username="<%=user.tag_id%>"
+            minutes="<%=user.total_hours%>"
+            profile_link="<%=user.user_id%>"
+            ></season-card>
+        <%count++;%>
+    <% } %>
+
+    </table>
+
+</div>
+</body>
+</html>
