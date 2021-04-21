@@ -9,7 +9,7 @@ module.exports = {
     async execute(message, args) {
         const { ping } = await fetch(ping_url)
             .then((result)=>{
-                console.log(result);
+                // console.log(result);
                     return result.json();
             })
         message.channel.send(ping);

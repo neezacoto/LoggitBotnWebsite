@@ -1,13 +1,13 @@
 const fetch = require('node-fetch');
-const {leaderboard_url} = require('../../endpoints.json');
+const {leaderboard_url,list_season_url} = require('../../endpoints.json');
 const Discord = require('discord.js');
 module.exports = {
-    name: 'display',
-    type: 'season',
+    name: 'rank',
+    type: 'user',
     description: 'Displays season rankings.',
     guildOnly:true,
     permissions: 'MANAGE_CHANNELS',
-    aliases: ['d'],
+    aliases: ['ranks','r','leaderboard','top'],
     usage: '<season> or nothing to get current season',
     args: false,
     cooldown: 10,
@@ -27,12 +27,19 @@ module.exports = {
             let place = 1;
             for(const position of seasons)
             {
-                rankings += `**${place}** - ${position.user_id}: ${position.total_hours} minutes\n`
+                rankings += `**${place}** - **${position.tag_id}**: \`\`${position.total_hours} minutes\`\`\n`
                 place++;
             }
-            rankings += `----------------------------------------`;
+            rankings += `...`;
 
             message.channel.send(rankings);
+            const embed = new Discord.MessageEmbed()
+                .setURL(list_season_url+message.guild.id)
+                .setTitle(`View Full Leaderboard`)
+                .setColor("#5ef666")
+                .setFooter(`Click on "View Full Leaderboard" to view all rankings!`, message.guild.iconURL())
+
+            message.channel.send(embed);
         }
 
 
