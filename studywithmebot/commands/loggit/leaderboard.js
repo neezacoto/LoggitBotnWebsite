@@ -18,16 +18,18 @@ module.exports = {
             server_id: message.guild.id,
             arg: user
         }
+
         let server_req = await fetch(leaderboard_url+`?season_number=${entry.arg}&server_id=${entry.server_id}`, {method: "GET"})
         let {seasons} = await server_req.json();
         if (!seasons.length) {
             message.reply("there's no information for this season :(");
         } else {
-            let rankings= `**SEASON ${seasons[0].season_number} LEADERBOARD:**\n----------------------------------------\n`;
+            let rankings= `**SEASON ${seasons[0].season_number} LEADERBOARD🏆:**\n----------------------------------------\n`;
             let place = 1;
+            let top_three_emoji = ['🥇','🥈','🥉'];
             for(const position of seasons)
             {
-                rankings += `**${place}** - **${position.tag_id}**: \`\`${position.total_hours} minutes\`\`\n`
+                rankings += `${(place<4)? top_three_emoji[place-1]:`_ _***${place}***`} - **${position.tag_id}**: \`\`${position.total_hours} minutes\`\`\n`
                 place++;
             }
             rankings += `...`;
@@ -41,7 +43,6 @@ module.exports = {
 
             message.channel.send(embed);
         }
-
 
     },
 };

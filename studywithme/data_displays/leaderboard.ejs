@@ -1,19 +1,34 @@
 <html>
 <head>
-    <link rel="stylesheet" href="./static/css/loggit_style.css">
-    <script src="/studywithme/static/js/listing-tags.js"></script>
+    <link rel="stylesheet" href="/css/loggit_style.css">
+    <script src="/js/season-entry-card.js"></script>
+
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Oswald&display=swap" rel="stylesheet">
+
+    <title>Loggit!</title>
+
 </head>
 <body>
+<header>
+
+    <div class="header-content">
+        <div class="logo-container">
+            <img id= "site-logo" src="/img/logo1.png" alt="logo"/>
+            <h4 class="logo">LOGGIT!</h4>
+        </div>
+
+        <nav>
+            <ul class="nav-links">
+                <li><a class="nav-link">ADD ME!</a></li>
+            </ul>
+        </nav>
+    </div>
+
+</header>
 <div>
     <%loggers.sort((a, b) => (parseInt(a.total_hours) < parseInt(b.total_hours)) ? 1 : -1);%>
-    <table>
-        <thead>
-            <th>Rank</th>
-            <th>Avatar</th>
-            <th>Username</th>
-            <th>Minutes</th>
-        </thead>
-        <tbody>
+
     <%let count = 1;%>
     <% for ( let user of loggers ) { %>
             <season-card
@@ -26,10 +41,6 @@
             ></season-card>
         <%count++;%>
     <% } %>
-        </tbody>
-
-    </table>
-
 </div>
 </body>
 </html>

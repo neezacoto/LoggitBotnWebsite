@@ -3,19 +3,22 @@ class SeasonCard extends HTMLElement {
     constructor() {
         super();
 
-
         this.root = this.attachShadow({mode: "closed"});
 
         this.root.innerHTML = `
-            <tr>
-                <td id="rank">0</td>
-                <td ><img src = "https://rb.gy/oremz3" width="128" height="128" alt="avatar"/></td>
-                <a href="/Season/null"><td id="username">username</td></a>
-                <td id="">-1</td>
-           </tr>
+
+            <div>
+                <dl>
+                    <dt id="rank">0</dt>
+                    <dt ><img src = "https://rb.gy/oremz3" width="128" height="128" alt="avatar"/></dt>
+                    <a href="/Season/null"><dt id="username">username</dt></a>
+                    <dt id="">-1</dt>
+                </dl>
+            </div> 
+           
         `
     }
-
+    connectedCallback() {}
     static get observedAttributes() {  return ["rank", "avatar", "username","minutes","profile_link"] }
     attributeChangedCallback(name, old_val, new_val) {
 
