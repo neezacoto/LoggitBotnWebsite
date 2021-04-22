@@ -25,6 +25,7 @@ Server.init({
     name: sequelize.DataTypes.TEXT
 }, {sequelize: orm, modelName: "Severs", timestamps: false})
 
+
 /**
  * Entry holds all the entries that will ever be inputted, but compiles entries to the Seasons class,
  * so when a season ends all entries from a server get removed.
@@ -63,9 +64,8 @@ Season.init({
     tag_id: sequelize.DataTypes.TEXT
 
 }, {sequelize: orm, modelName: "Seasons", timestamps: false});
-
-Season.belongsTo(Server, {as: "Server", foreignKey: "server_id"})
-
+const Seasons = Season.belongsTo(Server, {as: "seasons",foreignKey: "server_id"})
+Server.hasMany(Season, {foreignKey: "server_id"})
 orm.sync()
     .then((orm) => {
 
@@ -349,19 +349,22 @@ orm.sync()
         /**
          * webpage for displaying all the users ranks within a server's season
          */
-    app.get("/Season/List/:server_id", async (request, response) => {
-        let server_id = request.params.server_id;
+    app.get("/Season/List/", async (request, response) => {
+        let season_number = request.query.season_number;
+        let server_id = request.query.server_id;
         let server = await getServer(server_id);
+        let to_use = (season_number !== "0")? season_number : server.season_number
         Season.findAll({
             where: {
-                server_id: {[sequelize.Op.eq]: server_id},
-                season_number: {[sequelize.Op.eq]: server.season_number}
+                server_id: {[sequelize.Op.eq]: BigInt(server_id)},
+                season_number: {[sequelize.Op.eq]: BigInt(to_use)}
             }
         })
             .then((season_loggers) => {
-
+                season_loggers['server_name'] =server.name;
                 if (request.headers.accept.includes("text/html")) {
-                    response.render("leaderboard", {loggers: season_loggers})
+                    response.render("leaderboard", {
+                        loggers: season_loggers})
 
                 } else {
                     response.json(season_loggers);
@@ -377,12 +380,12 @@ orm.sync()
         let server_id = request.query.server_id;
         let server = await getServer(server_id);
         let user = {};
-        let to_use = (season_number !== "-1")? season_number : server.season_number
+        let to_use = (season_number !== "0")? season_number : server.season_number
 
         Season.findAll({
             where: {
-                server_id: { [sequelize.Op.eq]: server_id},
-                season_number: { [sequelize.Op.eq]: to_use}
+                server_id: { [sequelize.Op.eq]: BigInt(server_id)},
+                season_number: { [sequelize.Op.eq]: BigInt(to_use)}
             }
         }).then(async(users)=>{
             users.sort( (a,b)=> (parseInt(a.total_hours) < parseInt(b.total_hours))? 1 : -1);

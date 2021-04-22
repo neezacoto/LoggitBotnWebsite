@@ -7,6 +7,11 @@ class SeasonCard extends HTMLElement {
 
         this.root.innerHTML = `
 
+<style>
+img{
+border-radius: 50%;
+}
+</style>
             <div>
                 <dl>
                     <dt id="rank">0</dt>

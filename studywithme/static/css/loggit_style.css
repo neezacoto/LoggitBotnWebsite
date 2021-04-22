@@ -33,7 +33,7 @@ header{
 }
 
 #site-logo{
-    width: 200px;
+    width: 300px;
     height: auto;
 }
 
@@ -54,14 +54,14 @@ header{
 
 .logo{
 
-    font-size: 101px;
+    font-size: 150px;
     color: white;
     font-weight: normal;
 
     padding: 0;
     margin-left: 5px;
     margin-bottom: -101px;
-    margin-top:5px;
+    margin-top:6px;
     align-self: baseline;
 
     transition: color 200ms ease-out;
@@ -72,16 +72,46 @@ header{
 .nav-links>li{
     list-style: none;
     color: white;
-    font-size: 50px;
+    font-size: 70px;
     white-space: nowrap;
 }
-
 nav{
     padding: 0;
     margin-left: 5px;
     margin-bottom: -100px;
-    margin-top: 66.5px;
+    margin-top: 101px;
     align-self: baseline;
+}
+.entry-host{
+    display: flex;
+    align-items: center;
+    width: 90%;
+    margin: auto;
+    margin-top: 30px;
+}
+.entry-host>img{
+    width: 7%;
+    height: auto;
+}
+.avatar{
+    border-radius: 50%;
+}
+.entry-host>h4{
+    margin-left: 10px;
+    color: #84fda2;
+    font-weight: 100;
+    font-size: 80px;
+}
+.card-border{
+
+    width: 95%;
+    margin: auto;
+    margin-top: 30px;
+    padding: 20px;
+    border-radius: 25px;
+    border: 6px solid #d3d3d4;
+    box-shadow: 0 0 0 7pt #838383;
+
 }
 
 

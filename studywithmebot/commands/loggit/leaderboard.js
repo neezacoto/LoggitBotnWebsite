@@ -13,7 +13,7 @@ module.exports = {
     cooldown: 10,
     async execute(message, args) {
 
-        let user = Math.abs(args[0]) || -1
+        let user = Math.abs(args[0]) || 0
         let entry = {
             server_id: message.guild.id,
             arg: user
@@ -36,7 +36,7 @@ module.exports = {
 
             message.channel.send(rankings);
             const embed = new Discord.MessageEmbed()
-                .setURL(list_season_url+message.guild.id)
+                .setURL(list_season_url+`?server_id=${entry.server_id}&season_number=${entry.arg}`)
                 .setTitle(`View Full Leaderboard`)
                 .setColor("#5ef666")
                 .setFooter(`Click on "View Full Leaderboard" to view all rankings!`, message.guild.iconURL())
