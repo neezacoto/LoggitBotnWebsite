@@ -13,9 +13,9 @@ img{
     border-radius: 50%;
     width: 25%;
     height: auto;
+    min-width: 50px;
 }
 dl{
-    
     font-family: 'Oswald', sans-serif;
     color: #d3d3d4;
     font-size: 400%;
@@ -24,6 +24,16 @@ dl{
     background: #3e3e3f;
     border-radius: 5px;
     overflow: hidden;
+    margin: 5px
+}
+a{
+color: #d3d3d4;
+text-decoration: none;
+    transition: color 200ms ease-out;
+}
+
+a:hover,.logo:hover {
+    color: #ccff3e;
 }
 #rank{
 margin-left: 50px;
@@ -38,7 +48,7 @@ white-space: nowrap;
             <div class="card-content">
                 <dl>
                     <dt id="rank">#0</dt>
-                    <dt ><img src = "https://rb.gy/oremz3" width="128" height="128" alt="avatar"/></dt>
+                    <dt><img id="avatar" src = "https://rb.gy/oremz3" width="128" height="128" alt="avatar"/></dt>
                     <a href="/Season/null"><dt id="username">username</dt></a>
                     <dt class="logged">Minutes Logged:</dt>
                     <dt class="logged" id="minutes">-1</dt>
@@ -55,12 +65,12 @@ white-space: nowrap;
         modified_tag.innerText = new_val;
 
         if ( "avatar" === name ) {
-            let avatar_url = this.root.querySelector("img");
-            avatar_url.href = new_val;
+            let avatar_url = this.root.querySelector("#avatar")
+            avatar_url.src = new_val;
 
         }
         if ("profile_link" === name ) {
-            let user_url = this.root.querySelector("a");
+            let user_url = this.root.querySelector("#username");
             user_url.src = "/Season/"+new_val;
 
         }

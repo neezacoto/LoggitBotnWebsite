@@ -35,7 +35,6 @@
 
         <div class="card-border">
             <%loggers.sort((a, b) => (parseInt(a.total_hours) < parseInt(b.total_hours)) ? 1 : -1);%>
-
             <%let count = 1;%>
             <% for ( let user of loggers ) { %>
             <season-card

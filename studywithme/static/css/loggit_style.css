@@ -88,10 +88,13 @@ nav{
     width: 90%;
     margin: auto;
     margin-top: 30px;
+    overflow: hidden;
+    white-space: nowrap;
 }
 .entry-host>img{
     width: 7%;
     height: auto;
+    min-width: 100px;
 }
 .avatar{
     border-radius: 50%;
