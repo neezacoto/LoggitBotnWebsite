@@ -9,15 +9,39 @@ class SeasonCard extends HTMLElement {
 
 <style>
 img{
-border-radius: 50%;
+    padding: 10px;
+    border-radius: 50%;
+    width: 25%;
+    height: auto;
+}
+dl{
+    
+    font-family: 'Oswald', sans-serif;
+    color: #d3d3d4;
+    font-size: 400%;
+    display: flex;
+    align-items: center;
+    background: #3e3e3f;
+    border-radius: 5px;
+    overflow: hidden;
+}
+#rank{
+margin-left: 50px;
+margin-right: 30px;
+
+
+}
+.logged{
+white-space: nowrap;
 }
 </style>
-            <div>
+            <div class="card-content">
                 <dl>
-                    <dt id="rank">0</dt>
+                    <dt id="rank">#0</dt>
                     <dt ><img src = "https://rb.gy/oremz3" width="128" height="128" alt="avatar"/></dt>
                     <a href="/Season/null"><dt id="username">username</dt></a>
-                    <dt id="">-1</dt>
+                    <dt class="logged">Minutes Logged:</dt>
+                    <dt class="logged" id="minutes">-1</dt>
                 </dl>
             </div> 
            
@@ -32,12 +56,12 @@ border-radius: 50%;
 
         if ( "avatar" === name ) {
             let avatar_url = this.root.querySelector("img");
-            avatar_url.src = new_val;
+            avatar_url.href = new_val;
 
         }
-        if ( "profile_link" === name ) {
-            let user_url = this.root.querySelector("img");
-            user_url.href = "/Season/"+new_val;
+        if ("profile_link" === name ) {
+            let user_url = this.root.querySelector("a");
+            user_url.src = "/Season/"+new_val;
 
         }
 
