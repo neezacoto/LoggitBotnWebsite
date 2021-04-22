@@ -1,6 +1,6 @@
 *{
-    margin: 0px;
-    padding: 0px;
+    margin: 0;
+    padding: 0;
     box-sizing: border-box;
 }
 body{
@@ -10,6 +10,25 @@ body{
     width: 90%;
     margin: auto;
 }
+a {
+    color: white;
+    text-decoration: none;
+
+    display: inline-block;
+
+
+    background: linear-gradient(to bottom, white 0%,gray 50%,gray 50%);
+
+    background-size: 100% 200%;
+    background-position: 0%;
+
+    transition: background-position 275ms ease;
+}
+
+a:hover {
+    background-size: 100%;
+}
+
 header{
     background-color: #6bed8b;
     display: flex;
@@ -34,7 +53,7 @@ header{
 }
 .logo-container{
     padding: 0;
-    margin-bottom: 0px;
+    margin-bottom: 0;
     flex-direction: row;
 
     flex: 2;
@@ -58,7 +77,7 @@ header{
 .nav-links>li{
     list-style: none;
     color: white;
-    font-size: 30px;
+    font-size: 50px;
     white-space: nowrap;
 }
 
@@ -66,7 +85,7 @@ nav{
     padding: 0;
     margin-left: 5px;
     margin-bottom: -100px;
-    margin-top: 90px;
+    margin-top: 66.5px;
     align-self: baseline;
 }
 
