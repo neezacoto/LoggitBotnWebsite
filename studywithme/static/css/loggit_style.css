@@ -13,20 +13,13 @@ body{
 a {
     color: white;
     text-decoration: none;
-
     display: inline-block;
 
-
-    background: linear-gradient(to bottom, white 0%,gray 50%,gray 50%);
-
-    background-size: 100% 200%;
-    background-position: 0%;
-
-    transition: background-position 275ms ease;
+    transition: color 200ms ease-out;
 }
 
-a:hover {
-    background-size: 100%;
+a:hover,.logo:hover {
+    color: #ccff3e;
 }
 
 header{
@@ -70,6 +63,8 @@ header{
     margin-bottom: -101px;
     margin-top:5px;
     align-self: baseline;
+
+    transition: color 200ms ease-out;
 }
 .nav-link{
 
