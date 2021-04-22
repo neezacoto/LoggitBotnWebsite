@@ -7,6 +7,7 @@ module.exports = {
     usage: " ",
     cooldown: 3,
     async execute(message, args) {
+
         let num = `${Math.floor(Math.random() * 54) + 1}`;
         num =(num.length === 1)?  "000"+num : "00"+num;
 

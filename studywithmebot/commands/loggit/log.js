@@ -46,7 +46,7 @@ module.exports = {
                          user_id: message.author.toString(),
                          hours: args[0], //minutes
                          proof: args[1],
-                         tag_id: `${message.author.username}#${message.author.discriminator}`
+                         tag_id: `${message.author.username}#${message.author.discriminator}`,
                      }
                      //message.channel.send("\`\`\`"+JSON.stringify(entry)+"\`\`\`");
                      let check = await fetch(season_user_url + entry.serveruser_id, {

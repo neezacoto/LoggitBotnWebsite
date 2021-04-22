@@ -21,7 +21,8 @@ Server.init({
         primaryKey: true,
     },
     season_number: sequelize.DataTypes.BIGINT,
-    off_season: sequelize.DataTypes.BOOLEAN
+    off_season: sequelize.DataTypes.BOOLEAN,
+    name: sequelize.DataTypes.TEXT
 }, {sequelize: orm, modelName: "Severs", timestamps: false})
 
 /**
@@ -242,7 +243,8 @@ orm.sync()
             Server.create({
                 server_id: server_info.server_id,
                 season_number: 1,
-                off_season: false
+                off_season: false,
+                name: server_info.name
             }).then(r => {
                 response.status(200);
                 response.json({
@@ -449,6 +451,23 @@ orm.sync()
 
 
     })
+        /**
+         * updates the server name
+         */
+        app.post("/Server/Name/",(request,response)=>{
+            let new_name = request.body;
+            Server.findOne({
+                where:{
+                    server_id: {[sequelize.Op.eq]: new_name.server_id}
+                }
+            })
+                .then((server)=>{
+                    server.name = new_name.name;
+                    server.save();
+                    response.json(" ")
+                })
+
+        })
 
 
         app.listen(9999, () => {

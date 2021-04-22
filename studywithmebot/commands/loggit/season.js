@@ -14,7 +14,8 @@ module.exports = {
             //gets the server id
             let entry = {
                 server_id: message.guild.id,
-                arg: args[0]
+                arg: args[0],
+                name: message.guild.name
             }
             let server = await fetch(server_url+message.guild.id, {method: "GET"})
             let {off_season} = await server.json();
