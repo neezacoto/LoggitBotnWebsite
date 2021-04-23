@@ -158,6 +158,22 @@ nav{
     flex-grow: 2;
     margin: 5px;
 }
-
+.content-404{
+    width: 80%;
+    display: flex;
+    align-items: center;
+    margin-left: 10%;
+    margin-top: 5%;
+}
+#num-404{
+    margin-top: -200px;
+    font-size: 2000%;
+    color: #a8d405;
+}
+#message{
+    color: #01b82d;
+    font-size: 200%;
+    margin-top: -90px;
+}
 
 
