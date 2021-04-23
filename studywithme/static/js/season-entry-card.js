@@ -67,7 +67,7 @@ color: #6bed8b;
                 <div class="user">
                     <dt id="rank">#0</dt>
                     <dt><img id="avatar" src = "https://rb.gy/oremz3" width="128" height="128" alt="avatar"/></dt>
-                    <a id="link"href="/Season/null"><dt id="username">username</dt></a>
+                    <a href="/Entry/User/"><dt id="username">username</dt></a>
                 </div>
                     
                     <div class="logged">
@@ -81,7 +81,7 @@ color: #6bed8b;
         `
     }
     connectedCallback() {}
-    static get observedAttributes() {  return ["rank", "avatar", "username","minutes","profile_link"] }
+    static get observedAttributes() {  return ["rank", "avatar", "username","minutes","profile"] }
     attributeChangedCallback(name, old_val, new_val) {
 
         let modified_tag = this.root.querySelector( "#" + name );
@@ -92,9 +92,9 @@ color: #6bed8b;
             avatar_url.src = new_val;
 
         }
-        if ("profile_link" === name ) {
-            let user_url = this.root.querySelector("#link");
-            user_url.href = new_val;
+        if ("profile" === name ) {
+            let user_url = this.root.querySelector("a");
+            user_url.setAttribute('href',"/Entry/User/"+new_val)
 
         }
 
@@ -127,11 +127,11 @@ color: #6bed8b;
     set minutes(new_val) {
         this.setAttribute("minutes", new_val);
     }
-    get profile_link() {
-        return this.getAttribute("profile_link")
+    get profile() {
+        return this.getAttribute("profile")
     }
-    set profile_link(new_val) {
-        this.setAttribute("profile_link", new_val);
+    set profile(new_val) {
+        this.setAttribute("profile", new_val);
     }
 
 }

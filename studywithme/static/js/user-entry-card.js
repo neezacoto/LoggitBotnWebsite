@@ -7,14 +7,12 @@ class EntryCard extends HTMLElement {
 
         this.root.innerHTML = `
 
-<style>
-
-</style>
             <div class="card-content">
             <dl>
                 <div class="image-container">
-                    <dt><img id="proof" src = "https://images.vexels.com/media/users/3/131734/isolated/preview/
-                    05d86a9b63d1930d6298b27081ddc345-photo-preview-frame-icon-by-vexels.png" width="512" height="512"></dt>
+                    <dt>
+                        <img id="proof" src = "https://images.vexels.com/media/users/3/131734/isolated/preview/05d86a9b63d1930d6298b27081ddc345-photo-preview-frame-icon-by-vexels.png" width="512" height="512">
+                    </dt>
                 </div>
                 <div class="minutes-container">
                     <dt>Minutes Logged</dt>

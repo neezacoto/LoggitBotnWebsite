@@ -59,6 +59,8 @@ header{
     font-size: 600%;
     margin-left: 5%;
     letter-spacing: 10px;
+    white-space: nowrap;
+
 
 }
 .season>h4{
@@ -130,6 +132,17 @@ nav{
     border-radius: 5px;
     border: 6px solid #d3d3d4;
     box-shadow: 0 0 0 7pt #838383;
+
+}
+.entry-border{
+
+    width: 95%;
+    margin: auto;
+    margin-top: 30px;
+    padding-left: 5px;
+    padding-right: 5px;
+    padding-top: 1px;
+    padding-bottom: 1px;
 
 }
 
