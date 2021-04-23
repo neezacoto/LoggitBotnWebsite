@@ -15,6 +15,7 @@ module.exports = {
     cooldown: 10,
     execute(message,args)
     {
+
         const client = message.client;
         // getting the commands collection from the messages client coming from the index
         const { commands } = message.client;
