@@ -23,7 +23,7 @@ module.exports = {
         if (!seasons.length) {
             message.reply("there's no information for this season :(");
         } else {
-            let rankings= `**SEASON ${seasons[0].season_number} LEADERBOARD🏆:**\n----------------------------------------\n`;
+            let rankings= `**SEASON ${seasons[0].season_number} LEADERBOARD🏆:**\n---------------------------------------------------------\n`;
             let place = 1;
             let top_three_emoji = ['🥇','🥈','🥉'];
             for(const position of seasons)
@@ -31,14 +31,14 @@ module.exports = {
                 rankings += `${(place<4)? top_three_emoji[place-1]:`_ _***${place}***`} - **${position.tag_id}**: \`\`${position.total_hours} minutes\`\`\n`
                 place++;
             }
-            rankings += `...`;
+            rankings += `---------------------------------------------------------`;
 
             message.channel.send(rankings);
             const embed = new Discord.MessageEmbed()
                 .setURL(list_season_url+`?server_id=${entry.server_id}&season_number=${entry.arg}`)
-                .setTitle(`View Full Leaderboard`)
+                .setTitle(`Website View`)
                 .setColor("#5ef666")
-                .setFooter(`Click on "View Full Leaderboard" to view all rankings!`, message.guild.iconURL())
+                .setFooter(`Click on "Website View" to view all rankings!`, message.guild.iconURL())
 
             message.channel.send(embed);
         }
