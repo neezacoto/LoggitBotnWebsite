@@ -94,7 +94,7 @@ color: #6bed8b;
         }
         if ("profile" === name ) {
             let user_url = this.root.querySelector("a");
-            user_url.setAttribute('href',"/Entry/User/"+new_val)
+            user_url.href = "/Entry/User/"+new_val
 
         }
 
