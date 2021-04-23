@@ -46,7 +46,7 @@
                     avatar="<%=user.user_avatar%>"
                     username="<%=user.tag_id%>"
                     minutes="<%=user.total_hours%>"
-                    profile_link="<%=user.user_id%>"
+                    profile_link="<%=`/Entry/User/?server_id=${user.server_id}&user_id=${user.user_id}`%>"
             ></season-card>
             <%count++;%>
             <% } %>

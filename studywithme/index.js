@@ -346,6 +346,29 @@ orm.sync()
 
         response.send();
     })
+    app.get("/Entry/User", async (request,response)=>{
+        let user_id = request.query.user_id;
+        let server_id = request.query.server_id;
+        let server = await getServer(server_id);
+
+        Entry.findAll({
+            where: {
+                server_id: {[sequelize.Op.eq]: BigInt(server_id)},
+                user_id: {[sequelize.Op.eq]: user_id}
+            }
+        })
+            .then((season_logger) => {
+                season_logger['server_name'] =server.name;
+                season_logger['season_number'] =server.season_number
+                if (request.headers.accept.includes("text/html")) {
+                    response.render("logger_profile", {
+                        user_logs: season_logger})
+
+                } else {
+                    response.json(season_logger);
+                }
+            })
+    })
         /**
          * webpage for displaying all the users ranks within a server's season
          */

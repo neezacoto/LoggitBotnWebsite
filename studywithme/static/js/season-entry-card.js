@@ -67,7 +67,7 @@ color: #6bed8b;
                 <div class="user">
                     <dt id="rank">#0</dt>
                     <dt><img id="avatar" src = "https://rb.gy/oremz3" width="128" height="128" alt="avatar"/></dt>
-                    <a href="/Season/null"><dt id="username">username</dt></a>
+                    <a id="link"href="/Season/null"><dt id="username">username</dt></a>
                 </div>
                     
                     <div class="logged">
@@ -93,8 +93,8 @@ color: #6bed8b;
 
         }
         if ("profile_link" === name ) {
-            let user_url = this.root.querySelector("#username");
-            user_url.src = "/Season/"+new_val;
+            let user_url = this.root.querySelector("#link");
+            user_url.href = new_val;
 
         }
 

@@ -1,6 +1,6 @@
 const fetch = require('node-fetch');
-const {user_url} = require('../../endpoints.json');
-const {prefix} = require('../../config.json');
+const {user_url,card_entries_url} = require('../../endpoints.json');
+
 const Discord = require('discord.js');
 module.exports = {
     name: 'user',
@@ -38,6 +38,7 @@ module.exports = {
         }
 
         const embed = new Discord.MessageEmbed()
+            .setURL(card_entries_url+`?server_id=${entry.server_id}&user_id=${entry.arg}`)
             .setTitle(`-${user.username}'s stats-`)
             .setThumbnail(user.avatarURL())
             .setColor("#5ef666")
