@@ -10,45 +10,72 @@ class EntryCard extends HTMLElement {
 <style>
 
 .card-content{
-background: gray;
-width: 100%;
-height: 60%;
-
+background: #cfcfd0;
+width: 350px;
+height: 450px;
+border-radius: 5px;
 }
 .image-container{
+
 width: 100%;
 overflow: hidden;
 }
-.image-container>dt{
-align-content: center;
-margin: 0;
+.image-container{
+
+align-self: center;
+width: auto;
+height: 70%;
+margin: 1%;
+margin-bottom: 5%;
+flex: 2;
+flex-direction: column;
 
 }
 img{
-    margin-left: 5%;
-    margin-top: 5%;
-    padding: 0;
+    display: block;
+    margin: auto;
+    margin-top: 10%;
+    border-radius: 5px;
     width: 90%;
     height: auto;
+    -moz-border-radius: 5px;
 }
 dl{
 flex-direction: column;
 }
 .minutes-container{
+border-bottom-left-radius: 5px;
+border-bottom-right-radius: 5px;
+width: auto;
+height: auto;
+color: white;
+font-size: 250%;
+flex-direction: column;
+flex: 1;
+background: #3e3e3f;
 align-self: baseline;
-margin-bottom: 0;
+
+}
+
+.minutes-container>dt{
+width: 95%;
+margin: auto;
+}
+#minutes{
+font-size: 130%;
+margin-top: -20px;
 }
 
 </style>
             <div class="card-content">
             <dl>
-                <div class="image-container">
-                    <dt>
+                <dt class="image-container">
+                    
                         <img id="proof" src = "https://images.vexels.com/media/users/3/131734/isolated/preview/05d86a9b63d1930d6298b27081ddc345-photo-preview-frame-icon-by-vexels.png" width="512" height="512">
-                    </dt>
-                </div>
+                   
+                </dt>
                 <div class="minutes-container">
-                    <dt>Minutes Logged</dt>
+                    <dt>Minutes Logged:</dt>
                     <dt id="minutes">-1</dt>
                 </div>
                 </dl>

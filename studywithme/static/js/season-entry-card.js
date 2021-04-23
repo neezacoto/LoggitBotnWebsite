@@ -67,7 +67,7 @@ color: #6bed8b;
                 <div class="user">
                     <dt id="rank">#0</dt>
                     <dt><img id="avatar" src = "https://rb.gy/oremz3" width="128" height="128" alt="avatar"/></dt>
-                    <a href="/Entry/User/"><dt id="username">username</dt></a>
+                    <a id = "profile" href="/Entry/User/"><dt id="username">username</dt></a>
                 </div>
                     
                     <div class="logged">
@@ -85,7 +85,8 @@ color: #6bed8b;
     attributeChangedCallback(name, old_val, new_val) {
 
         let modified_tag = this.root.querySelector( "#" + name );
-        modified_tag.innerText = new_val;
+        if(name !== "profile") {modified_tag.innerText = new_val;}
+
 
         if ( "avatar" === name ) {
             let avatar_url = this.root.querySelector("#avatar")
