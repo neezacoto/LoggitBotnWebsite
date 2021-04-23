@@ -33,7 +33,9 @@
             <h4 ><%=loggers.server_name%>'s Server Leaderboard</h4>
         </div>
         <div class="season">
-            <h4>Season #<%=loggers[0].season_number%></h4>
+            <a id ="num_season" href="/Season/List/?server_id=<%=loggers[0].server_id%>&season_number=<%=loggers[0].season_number%>">
+                Season #<%=loggers[0].season_number%>
+            </a>
         </div>
 
         <div class="card-border">

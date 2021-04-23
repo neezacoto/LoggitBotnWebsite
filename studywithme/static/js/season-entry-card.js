@@ -60,6 +60,7 @@ align-items: center;
 #minutes{
 font-size: 150%;
 color: #6bed8b;
+font-family: Impact, sans-serif;
 }
 </style>
             <div class="card-content">

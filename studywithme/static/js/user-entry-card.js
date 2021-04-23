@@ -53,7 +53,8 @@ font-size: 250%;
 flex-direction: column;
 flex: 1;
 background: #3e3e3f;
-align-self: baseline;
+
+
 
 }
 
@@ -64,6 +65,8 @@ margin: auto;
 #minutes{
 font-size: 130%;
 margin-top: -20px;
+color: #6bed8b;
+
 }
 
 </style>

@@ -11,14 +11,14 @@ body{
     margin: auto;
 }
 a {
-    color: white;
+
     text-decoration: none;
     display: inline-block;
 
     transition: color 200ms ease-out;
 }
 
-a:hover,.logo:hover {
+a:hover,.logo:hover,#num_season:hover{
     color: #ccff3e;
 }
 
@@ -63,6 +63,7 @@ header{
 
 
 }
+
 .season>h4{
     margin-top: 0;
     font-weight: 300;
@@ -81,14 +82,22 @@ header{
     transition: color 200ms ease-out;
 }
 .nav-link{
-
+    color: white;
 }
 .nav-links>li{
     list-style: none;
-    color: white;
+    color: #ffffff;
     font-size: 70px;
     white-space: nowrap;
 }
+#num_season{
+    margin-top: 0;
+    font-weight: 300;
+    color: #26db52;
+    transition: color 200ms ease-out;
+
+}
+
 nav{
     padding: 0;
     margin-left: 5px;
@@ -136,17 +145,18 @@ nav{
 }
 .entry-border{
 
-    width: 95%;
-    margin: 30px auto auto;
+
+    margin: auto;
     padding: 1px 5px;
-    flex-direction: row;
     display: flex;
+    max-width: 90%;
+    flex-wrap: wrap;
 }
 
 .user-entry-card{
 
-    flex-basis: 25%;
-    flex-grow: 1;
+    flex-basis: 15%;
+    flex-grow: 2;
     margin: 5px;
 }
 

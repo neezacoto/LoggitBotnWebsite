@@ -33,7 +33,9 @@
             <h4 ><%=user_logs[0].tag_id%>'s Logs</h4>
         </div>
         <div class="season">
-            <h4>Season #<%=user_logs.season_number%></h4>
+            <a id ="num_season" href="/Season/List/?server_id=<%=user_logs[0].server_id%>&season_number=<%=user_logs.season_number%>">
+                Season #<%=user_logs.season_number%>
+            </a>
         </div>
 
         <div class="entry-border">
@@ -43,6 +45,7 @@
                     class="user-entry-card"
                     proof="<%=log.proof%>"
                     minutes="<%=log.hours%>"
+
             ></entry-card>
 
             <% } %>
