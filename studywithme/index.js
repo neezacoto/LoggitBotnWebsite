@@ -76,15 +76,7 @@ orm.sync()
     app.set("view engine","ejs");
     app.set("views", "data_displays");
 
-    app.use(function(req, res, next) {
-        res.status(404);
 
-        // respond with html page
-        if (req.accepts('html')) {
-            res.render('oops', {url: req.url});
-            return;
-        }
-    });
 
 
     /**
@@ -372,6 +364,10 @@ orm.sync()
             .then((season_logger) => {
                 season_logger['server_name'] =server.name;
                 season_logger['season_number'] =server.season_number
+                if(request.accepts("text/html")&&season_logger.length===0){
+                        response.render('oops', {url: request.url});
+                        return;
+                }
                 if (request.headers.accept.includes("text/html")) {
                     response.render("logger_profile", {
                         user_logs: season_logger})
@@ -397,6 +393,10 @@ orm.sync()
         })
             .then((season_loggers) => {
                 season_loggers['server_name'] =server.name;
+                if(request.accepts("text/html")&&season_loggers.length===0){
+                    response.render('oops', {url: request.url});
+                    return;
+                }
                 if (request.headers.accept.includes("text/html")) {
                     response.render("leaderboard", {
                         loggers: season_loggers})
@@ -507,6 +507,15 @@ orm.sync()
                 })
 
         })
+        app.use(function(req, res, next) {
+            res.status(404);
+
+            // respond with html page
+            if (req.accepts('html')) {
+                res.render('oops', {url: req.url});
+
+            }
+        });
 
 
         app.listen(9999, () => {
