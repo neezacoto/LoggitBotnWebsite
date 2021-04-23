@@ -76,6 +76,15 @@ orm.sync()
     app.set("view engine","ejs");
     app.set("views", "data_displays");
 
+    app.use(function(req, res, next) {
+        res.status(404);
+
+        // respond with html page
+        if (req.accepts('html')) {
+            res.render('oops', {url: req.url});
+            return;
+        }
+    });
 
 
     /**
@@ -117,6 +126,8 @@ orm.sync()
         if(server === null || server === undefined)
         {
             response.status(404);
+            response.json({off_season: true});
+            response.send();
         }else{
             response.status(200)
             Entry.aggregate('user_id', 'count',{
@@ -124,7 +135,8 @@ orm.sync()
             })
                 .then((count)=>{
                     server.dataValues['logging'] = count;
-                    response.json(server)
+                    response.json(server);
+                    response.send();
                 })
 
 
