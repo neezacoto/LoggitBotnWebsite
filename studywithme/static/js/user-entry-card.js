@@ -38,7 +38,10 @@ img{
     border-radius: 5px;
     width: 90%;
     height: auto;
-    -moz-border-radius: 5px;
+    transition: width 150ms;
+}
+img:hover{
+width: 80%;
 }
 dl{
 flex-direction: column;
@@ -53,8 +56,6 @@ font-size: 250%;
 flex-direction: column;
 flex: 1;
 background: #3e3e3f;
-
-
 
 }
 
@@ -73,9 +74,10 @@ color: #6bed8b;
             <div class="card-content">
             <dl>
                 <dt class="image-container">
-                    
+                        <a href="https://images.vexels.com/media/users/3/131734/isolated/preview/05d86a9b63d1930d6298b27081ddc345-photo-preview-frame-icon-by-vexels.png"
+                        target="_blank">
                         <img id="proof" src = "https://images.vexels.com/media/users/3/131734/isolated/preview/05d86a9b63d1930d6298b27081ddc345-photo-preview-frame-icon-by-vexels.png" width="512" height="512">
-                   
+                        </a>
                 </dt>
                 <div class="minutes-container">
                     <dt>Minutes Logged:</dt>
@@ -96,7 +98,8 @@ color: #6bed8b;
         if ( "proof" === name ) {
             let avatar_url = this.root.querySelector("#proof")
             avatar_url.src = new_val;
-
+            let url = this.root.querySelector("a")
+            url.href = new_val;
         }
 
     }

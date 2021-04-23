@@ -4,7 +4,7 @@ module.exports = {
     name: 'refresh',
     type: "season",
     aliases: ['update'],
-    description: 'updates server name',
+    description: 'Updates server name',
     permissions: 'MANAGE_CHANNELS',
     guildOnly:true,
     usage: " ",

@@ -401,6 +401,7 @@ orm.sync()
     app.get("/Season/Display/",async (request,response)=>{
         let season_number = request.query.season_number;
         let server_id = request.query.server_id;
+        let how_many = request.query.how_many;
         let server = await getServer(server_id);
         let user = {};
         let to_use = (season_number !== "0")? season_number : server.season_number
@@ -413,7 +414,7 @@ orm.sync()
         }).then(async(users)=>{
             users.sort( (a,b)=> (parseInt(a.total_hours) < parseInt(b.total_hours))? 1 : -1);
 
-            user['seasons'] = (users.length > 10)? await users.splice(0,9): users;
+            user['seasons'] = (users.length > 5 && how_many===null)? await users.splice(0,5): users;
             response.json(user);
         })
     })

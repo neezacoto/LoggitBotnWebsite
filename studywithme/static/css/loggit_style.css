@@ -145,12 +145,11 @@ nav{
 }
 .entry-border{
 
-
+    width: 90%;
     margin: auto;
-    padding: 1px 5px;
-    display: flex;
-    max-width: 90%;
-    flex-wrap: wrap;
+    display: grid;
+    grid-template-columns: 25% 25% 25% 25%;
+    grid-column-gap: 5px;
 }
 
 .user-entry-card{

@@ -2,7 +2,7 @@ module.exports = {
     name: 'ribbit',
     type: "fun",
     aliases: ['frog'],
-    description: 'get a picture of a random frog!',
+    description: 'Get a picture of a random frog!',
     guildOnly:true,
     usage: " ",
     cooldown: 3,

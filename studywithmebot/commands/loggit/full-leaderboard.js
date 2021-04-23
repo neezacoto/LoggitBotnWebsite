@@ -2,11 +2,11 @@ const fetch = require('node-fetch');
 const {leaderboard_url,list_season_url} = require('../../endpoints.json');
 const Discord = require('discord.js');
 module.exports = {
-    name: 'rank',
-    type: 'user',
-    description: 'Displays season rankings.',
+    name: 'display',
+    type: 'season',
+    description: 'Displays full leaderboard.',
     guildOnly:true,
-    aliases: ['ranks','r','leaderboard','top'],
+    permissions: 'MANAGE_CHANNELS',
     usage: '<season> or nothing to get current season',
     args: false,
     cooldown: 10,
@@ -18,7 +18,7 @@ module.exports = {
             arg: user
         }
 
-        let server_req = await fetch(leaderboard_url+`?season_number=${entry.arg}&server_id=${entry.server_id}`, {method: "GET"})
+        let server_req = await fetch(leaderboard_url+`?season_number=${entry.arg}&server_id=${entry.server_id}&how_many=1`, {method: "GET"})
         let {seasons} = await server_req.json();
         if (!seasons.length) {
             message.reply("there's no information for this season :(");

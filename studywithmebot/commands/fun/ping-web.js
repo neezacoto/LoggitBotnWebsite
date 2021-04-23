@@ -3,7 +3,7 @@ const {ping_url} = require('../../endpoints.json');
 module.exports = {
     name: 'pingweb',
     type: "fun",
-    description: 'get Ponged by the webserver!',
+    description: 'Get Ponged by the webserver!',
     guildOnly:true,
     cooldown: 10,
     async execute(message, args) {
