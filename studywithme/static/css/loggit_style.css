@@ -52,10 +52,22 @@ header{
     flex: 2;
 }
 
-.logo{
+.season{
+    margin-top: -60px;
+    margin-bottom: -30px;
+    color: #26dd52;
+    font-size: 600%;
+    margin-left: 5%;
+    letter-spacing: 10px;
 
+}
+.season>h4{
+    margin-top: 0;
+    font-weight: 300;
+}
+.logo{
     font-size: 150px;
-    color: white;
+    color: #ffffff;
     font-weight: normal;
 
     padding: 0;
@@ -86,10 +98,11 @@ nav{
     display: flex;
     align-items: center;
     width: 90%;
-    margin: auto;
-    margin-top: 30px;
+    margin-left: 2%;
+    margin-top: 15px;
     overflow: hidden;
     white-space: nowrap;
+    margin-bottom: 0;
 }
 .entry-host>img{
     width: 7%;

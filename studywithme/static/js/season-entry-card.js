@@ -8,16 +8,17 @@ class SeasonCard extends HTMLElement {
         this.root.innerHTML = `
 
 <style>
+
 img{
     padding: 10px;
     border-radius: 50%;
-    width: 25%;
+    width: 80%;
     height: auto;
     min-width: 50px;
 }
 dl{
     font-family: 'Oswald', sans-serif;
-    color: #d3d3d4;
+    color: #ffffff;
     font-size: 400%;
     display: flex;
     align-items: center;
@@ -36,22 +37,44 @@ a:hover,.logo:hover {
     color: #ccff3e;
 }
 #rank{
+color: #ffffff;
 margin-left: 50px;
 margin-right: 30px;
 
-
+}
+.user{
+flex: 1;
+}
+.card-content{
+align-items: center;
 }
 .logged{
+margin-right: 20px;
+}
+.logged,.user{
 white-space: nowrap;
+display: flex;
+align-items: center;
+
+}
+#minutes{
+font-size: 150%;
+color: #6bed8b;
 }
 </style>
             <div class="card-content">
                 <dl>
+                <div class="user">
                     <dt id="rank">#0</dt>
                     <dt><img id="avatar" src = "https://rb.gy/oremz3" width="128" height="128" alt="avatar"/></dt>
                     <a href="/Season/null"><dt id="username">username</dt></a>
-                    <dt class="logged">Minutes Logged:</dt>
-                    <dt class="logged" id="minutes">-1</dt>
+                </div>
+                    
+                    <div class="logged">
+                        <dt >Minutes Logged:</dt>
+                        <dt id="minutes">-1</dt>
+                    </div>
+                    
                 </dl>
             </div> 
            
