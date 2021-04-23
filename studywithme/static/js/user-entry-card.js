@@ -7,6 +7,39 @@ class EntryCard extends HTMLElement {
 
         this.root.innerHTML = `
 
+<style>
+
+.card-content{
+background: gray;
+width: 100%;
+height: 60%;
+
+}
+.image-container{
+width: 100%;
+overflow: hidden;
+}
+.image-container>dt{
+align-content: center;
+margin: 0;
+
+}
+img{
+    margin-left: 5%;
+    margin-top: 5%;
+    padding: 0;
+    width: 90%;
+    height: auto;
+}
+dl{
+flex-direction: column;
+}
+.minutes-container{
+align-self: baseline;
+margin-bottom: 0;
+}
+
+</style>
             <div class="card-content">
             <dl>
                 <div class="image-container">
