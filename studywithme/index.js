@@ -86,6 +86,7 @@ orm.sync()
      */
     async function getServer(object)
     {
+        try{
         if(typeof object === "object") {
             return await Server.findOne({
                 where: {
@@ -98,6 +99,9 @@ orm.sync()
                     server_id: {[sequelize.Op.eq]: BigInt(object)}
                 },
             });
+        }
+        }catch (e) {
+            return null;
         }
     }
 
@@ -355,27 +359,35 @@ orm.sync()
         let server_id = request.query.server_id;
         let server = await getServer(server_id);
 
-        Entry.findAll({
-            where: {
-                server_id: {[sequelize.Op.eq]: BigInt(server_id)},
-                user_id: {[sequelize.Op.eq]: user_id}
-            }
-        })
-            .then((season_logger) => {
-                season_logger['server_name'] =server.name;
-                season_logger['season_number'] =server.season_number
-                if(request.accepts("text/html")&&season_logger.length===0){
-                        response.render('oops', {url: request.url});
-                        return;
-                }
-                if (request.headers.accept.includes("text/html")) {
-                    response.render("logger_profile", {
-                        user_logs: season_logger})
-
-                } else {
-                    response.json(season_logger);
+        try {
+            Entry.findAll({
+                where: {
+                    server_id: {[sequelize.Op.eq]: BigInt(server_id)},
+                    user_id: {[sequelize.Op.eq]: user_id}
                 }
             })
+                .then((season_logger) => {
+                    season_logger['server_name'] = server.name;
+                    season_logger['season_number'] = server.season_number
+                    if (request.accepts("text/html") && season_logger.length === 0) {
+                        response.render('oops', {url: request.url});
+                        return;
+                    }
+                    if (request.headers.accept.includes("text/html")) {
+                        response.render("logger_profile", {
+                            user_logs: season_logger
+                        })
+
+                    } else {
+                        response.json(season_logger);
+                    }
+                })
+        }catch (e) {
+            if(request.accepts("text/html")){
+                response.render('oops', {url: request.url});
+
+            }
+        }
     })
         /**
          * webpage for displaying all the users ranks within a server's season
@@ -385,6 +397,7 @@ orm.sync()
         let server_id = request.query.server_id;
         let server = await getServer(server_id);
         let to_use = (season_number !== "0")? season_number : server.season_number
+        try{
         Season.findAll({
             where: {
                 server_id: {[sequelize.Op.eq]: BigInt(server_id)},
@@ -405,6 +418,12 @@ orm.sync()
                     response.json(season_loggers);
                 }
             })
+        }catch (e){
+            if(request.accepts("text/html")){
+                response.render('oops', {url: request.url});
+
+            }
+        }
 
     })
         /**

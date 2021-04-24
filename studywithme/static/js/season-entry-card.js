@@ -54,6 +54,7 @@ align-items: center;
 }
 .logged{
 margin-right: 20px;
+overflow: hidden;
 }
 .logged,.user{
 white-space: nowrap;
