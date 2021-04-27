@@ -7,4 +7,4 @@ Then users can check out eachothers rankings and scores using the bot, along wit
 Users also have the option to use the website view, to view an updated leaderboard of the users that are studying.
 Each user can be clicked on to view all their entries!
 
-This bot project uses the discord.js library to operate the bot, and sequalize/postgres for database storage. 
+This project uses the discord.js library to operate the bot, and sequalize/postgres for database storage. 
