@@ -34,16 +34,31 @@ dl{
 a{
 color: #d3d3d4;
 text-decoration: none;
-    transition: color 200ms ease-out;
+   
+}
+#profile-holder img, #profile-holder dt,.card-content dt{
+transition-duration: 250ms;
+transition-property: width, color;
+transition-timing-function: ease-out;
 }
 
-a:hover,.logo:hover {
-    color: #ccff3e;
+.card-content:hover #rank{
+color: #fff53e
+}
+.logo:hover,.card-content:hover dt{
+color: #ccff3e
+}
+.card-content:hover img
+{ 
+    width: 76%; 
 }
 #rank{
 color: #ffffff;
 margin-left: 50px;
 margin-right: 30px;
+    transition-duration: 250ms;
+transition-property:  color;
+transition-timing-function: ease-in;
 
 }
 .user{
@@ -60,20 +75,30 @@ overflow: hidden;
 white-space: nowrap;
 display: flex;
 align-items: center;
-
 }
 #minutes{
 font-size: 150%;
 color: #6bed8b;
 font-family: Impact, sans-serif;
 }
+#profile-holder{
+    display: flex;
+    align-items: center;
+    
+}
+
 </style>
+            <a id = "profile" href="/Entry/User/">
             <div class="card-content">
                 <dl>
                 <div class="user">
                     <dt id="rank">#0</dt>
+                
+                <div id="profile-holder">
                     <dt><img id="avatar" src = "https://rb.gy/oremz3" width="128" height="128" alt="avatar"/></dt>
-                    <a id = "profile" href="/Entry/User/"><dt id="username">username</dt></a>
+                    <dt id="username">username</dt>
+                </div>
+                
                 </div>
                     
                     <div class="logged">
@@ -83,6 +108,7 @@ font-family: Impact, sans-serif;
                     
                 </dl>
             </div> 
+            </a>
            
         `
     }

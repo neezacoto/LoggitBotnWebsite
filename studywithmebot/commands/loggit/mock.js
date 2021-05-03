@@ -100,7 +100,7 @@ module.exports = {
                 `https://cdn.discordapp.com/attachments/835259740690710629/835280879760703508/Screenshot_20210423-182646_Forest.jpg`
             ]
             let proof_num = `${Math.floor(Math.random() * 6)}`
-            let minutes_num=`${Math.floor(Math.random() * 1440) + 1}`
+            let minutes_num=`${Math.floor(Math.random() * 480) + 1}`
 
             let server_req = await fetch(server_url + message.guild.id, {method: "GET"})
             let {off_season} = await server_req.json();
