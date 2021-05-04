@@ -33,10 +33,13 @@ const log = async (message,entry,arg_one) =>{
                 },
                 body: JSON.stringify(entry)
             })
-            .then((result) => {
+            .then(async (result) => {
                 console.log(result);
                 if (result.status === 200) {
-                    message.channel.send("Welcome to the season!")
+                    let r = await fetch("https://zenquotes.io/api/random",{method: "GET"});
+                    let quote = await r.json();
+                    let {q,a} = quote[0];
+                    message.reply(`\n\`\`Welcome to The Season!\`\`\n> ${q}\n-${a}`);
                 } else if (result.status === 404) {
                     message.channel.send("Your server is on off season!")
                 } else if (result.status === 500) {
