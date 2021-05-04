@@ -37,7 +37,7 @@ module.exports = {
                                 server_id: message.guild.id})
                         })
                         .then((result) => {
-                                message.channel.send(+user_to_delete.toString()+" has been removed from server logs");
+                                message.channel.send("The user has been removed from server logs");
                         })
 
 
