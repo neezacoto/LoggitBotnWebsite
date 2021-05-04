@@ -8,3 +8,5 @@ Users also have the option to use the website view, to view an updated leaderboa
 Each user can be clicked on to view all their entries!
 
 This project uses the discord.js library to operate the bot, and sequalize/postgres for database storage. 
+
+presentation: https://www.youtube.com/watch?v=tSqRuyeU3XU
